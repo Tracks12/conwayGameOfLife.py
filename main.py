@@ -13,10 +13,8 @@ class c:
 
 def initMap(x, y):
 	map = []
-
 	for i in range(0, x):
 		map.append([])
-
 		for j in range(0, y):
 			map[i].append(0)
 
@@ -26,59 +24,62 @@ def displayMap(map):
 	for item in map:
 		row = ""
 		for value in item:
-			if(value): row += "{}{}{} ".format(c.g, value, c.e)
-			else: row += "{} ".format(value)
+			if(value): row += "{}{}{}".format(c.g, u'\u2588', c.e)
+			else: row += "{}{}{}".format(c.r, u'\u2588', c.e)
 
 		print(row)
 
-def addGlider(map, xy, state):
-	if(state):
-		map[xy[0]-1][xy[1]] = 1
-		map[xy[0]-1][xy[1]-1] = 1
-		map[xy[0]-1][xy[1]-2] = 1
+	return True
 
-	else:
-		map[xy[0]][xy[1]-1] = 1
-		map[xy[0]-1][xy[1]-1] = 1
-		map[xy[0]-2][xy[1]-1] = 1
-
-	return [xy, state]
-
-def update(map, g):
-	sleep(1)
+def update(map):
+	sleep(.1)
 	try: os.system('clear')
 	except: os.system('cls')
 
-	for i in range(0, len(g)):
-		if(g[i][1]):
-			map[g[i][0][0]-1][g[i][0][1]] = 0
-			map[g[i][0][0]-1][g[i][0][1]-2] = 0
-			map[g[i][0][0]][g[i][0][1]-1] = 1
-			map[g[i][0][0]-2][g[i][0][1]-1] = 1
-			g[i][1] = False
-		else:
-			map[g[i][0][0]-1][g[i][0][1]] = 1
-			map[g[i][0][0]-1][g[i][0][1]-2] = 1
-			map[g[i][0][0]][g[i][0][1]-1] = 0
-			map[g[i][0][0]-2][g[i][0][1]-1] = 0
-			g[i][1] = True
+	xmap = initMap(len(map), len(map[0]))
 
-	displayMap(map)
+	for x in range(0, len(map)-1):
+		for y in range(0, len(map[x])-1):
+			xmap[x][y] = map[x][y]
+			active = 0
+			active += map[x-1][y-1]
+			active += map[x-1][y]
+			active += map[x-1][y+1]
+			active += map[x][y-1]
+			active += map[x][y+1]
+			active += map[x+1][y-1]
+			active += map[x+1][y]
+			active += map[x+1][y+1]
 
-	with open("save.json", 'w') as outFile:
-		json.dump(g, outFile, sort_keys=True, indent=2)
+			if((active == 3) or (map[x][y] and (active == 2))): xmap[x][y] = 1
+			else: xmap[x][y] = 0
 
-	update(map, g)
+	displayMap(xmap)
+
+	#with open("save.json", 'w') as outFile:
+	#	json.dump(map, outFile)
+
+	update(xmap)
 
 def main():
-	gliders = []
-	map = initMap(39, 39)
+	try: os.system('clear')
+	except: os.system('cls')
 
-	for x in range(0, 80):
-		gliders.append(addGlider(map, (randint(1, len(map)-1), randint(1, len(map[0])-1)), bool(getrandbits(1))))
+	try:
+		with open("data.json") as inFile:
+			map = json.load(inFile)
+
+	except Exception:
+		map = initMap(30, 80)
+
+		map[0][0] = 1
+		map[1][2] = 1
+		map[1][1] = 1
+		map[2][1] = 1
+		map[2][0] = 1
 
 	displayMap(map)
-	update(map, gliders)
+	update(map)
 
 if __name__ == "__main__":
 	main()
