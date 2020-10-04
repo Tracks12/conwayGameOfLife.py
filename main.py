@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits, randint
+from platform import system
 from time import sleep
 import json, os
 
@@ -32,9 +33,8 @@ def displayMap(map):
 	return True
 
 def update(map):
-	sleep(.1)
-	try: os.system('clear')
-	except: os.system('cls')
+	if(system() == "Linux"): os.system('clear')
+	else: os.system('cls')
 
 	xmap = initMap(len(map), len(map[0]))
 
@@ -54,32 +54,31 @@ def update(map):
 			if((active == 3) or (map[x][y] and (active == 2))): xmap[x][y] = 1
 			else: xmap[x][y] = 0
 
-	displayMap(xmap)
+	with open("data.json", 'w') as outFile:
+		json.dump(map, outFile)
 
-	#with open("save.json", 'w') as outFile:
-	#	json.dump(map, outFile)
-
-	update(xmap)
+	return xmap
 
 def main():
-	try: os.system('clear')
-	except: os.system('cls')
+	if(system() == "Linux"): os.system('clear')
+	else: os.system('cls')
 
 	try:
 		with open("data.json") as inFile:
 			map = json.load(inFile)
 
 	except Exception:
-		map = initMap(30, 80)
+		size = {
+			"x": int(input("Hauteur de la map: ")),
+			"y": int(input("Largeur de la map: "))
+		}
 
-		map[0][0] = 1
-		map[1][2] = 1
-		map[1][1] = 1
-		map[2][1] = 1
-		map[2][0] = 1
+		map = initMap(size["x"], size["y"])
 
-	displayMap(map)
-	update(map)
+	while(True):
+		map = update(map)
+		displayMap(map)
+		sleep(.5)
 
 if __name__ == "__main__":
 	main()
