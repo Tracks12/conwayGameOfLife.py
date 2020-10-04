@@ -7,8 +7,6 @@ from time import sleep
 import json, os
 
 class c:
-	r = "\033[31m"
-	b = "\033[34m"
 	g = "\033[32m"
 	e = "\033[0m"
 
