@@ -25,8 +25,8 @@ def displayMap(map):
 	for item in map:
 		row = ""
 		for value in item:
-			if(value): row += "{}{}{}".format(c.g, u'\u2588', c.e)
-			else: row += "{}{}{}".format(c.r, u'\u2588', c.e)
+			if(value): row += "{}O{} ".format(c.g, c.e)
+			else: row += ". "
 
 		print(row)
 
@@ -55,22 +55,19 @@ def update(map):
 			else: xmap[x][y] = 0
 
 	with open("data.json", 'w') as outFile:
-		json.dump(map, outFile)
+		json.dump(xmap, outFile)
 
 	return xmap
 
 def main():
-	if(system() == "Linux"): os.system('clear')
-	else: os.system('cls')
-
 	try:
 		with open("data.json") as inFile:
 			map = json.load(inFile)
 
 	except Exception:
 		size = {
-			"x": int(input("Hauteur de la map: ")),
-			"y": int(input("Largeur de la map: "))
+			'x': int(input("Hauteur de la map: ")),
+			'y': int(input("Largeur de la map: "))
 		}
 
 		map = initMap(size["x"], size["y"])
@@ -78,7 +75,9 @@ def main():
 	while(True):
 		map = update(map)
 		displayMap(map)
-		sleep(.5)
+		sleep(.25)
+
+	return True
 
 if __name__ == "__main__":
 	main()
