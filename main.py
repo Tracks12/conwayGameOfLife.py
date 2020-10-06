@@ -30,6 +30,14 @@ def saveJSON(map):
 	try:
 		with open("data.json", 'w') as inFile:
 			json.dump(map, inFile)
+			#raw = ""
+			#for x in range(0, len(map)-1):
+			#	for y in range(0, len(map[x])-1):
+			#		raw += str(map[x][y])
+
+			#	raw += "\n"
+
+			#inFile.write(raw)
 
 		return True
 
@@ -88,6 +96,18 @@ if __name__ == "__main__":
 		if(sys.argv[1] in ("-d", "--display")):
 			map = loadJSON()
 			displayMap(map)
+
+		elif(sys.argv[1] in ("-n", "--new")):
+			map = initMap(int(sys.argv[2]), int(sys.argv[3]))
+			displayMap(map)
+			saveJSON(map)
+
+		elif(sys.argv[1] in ("-a", "--add")):
+			map = loadJSON()
+			for glider in eval(sys.argv[2]):
+				map[int(glider[0])-1][int(glider[1])-1] = 1
+
+			saveJSON(map)
 
 	else:
 		main()
