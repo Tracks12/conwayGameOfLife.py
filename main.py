@@ -31,14 +31,6 @@ def saveJSON(map):
 	try:
 		with open("data.json", 'w') as inFile:
 			json.dump(map, inFile)
-			#raw = ""
-			#for x in range(0, len(map)-1):
-			#	for y in range(0, len(map[x])-1):
-			#		raw += str(map[x][y])
-
-			#	raw += "\n"
-
-			#inFile.write(raw)
 
 		return True
 
@@ -95,20 +87,34 @@ def main():
 if __name__ == "__main__":
 	if(len(argv) > 1):
 		if(argv[1] in ("-d", "--display")):
-			map = loadJSON()
-			displayMap(map)
+			try:
+				map = loadJSON()
+				displayMap(map)
+
+			except Exception:
+				print("[!] - Il y a pas de map sauvegardée")
+				print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
 
 		elif(argv[1] in ("-n", "--new")):
-			map = initMap(int(argv[2]), int(argv[3]))
-			displayMap(map)
-			saveJSON(map)
+			try:
+				map = initMap(int(argv[2]), int(argv[3]))
+				displayMap(map)
+				saveJSON(map)
+
+			except Exception:
+				print("[!] - Spécifier les dimension <x> et <y>")
 
 		elif(argv[1] in ("-a", "--add")):
-			map = loadJSON()
-			for glider in eval(argv[2]):
-				map[int(glider[0])-1][int(glider[1])-1] = 1
+			try:
+				map = loadJSON()
+				for glider in eval(argv[2]):
+					map[int(glider[0])-1][int(glider[1])-1] = 1
 
-			saveJSON(map)
+				saveJSON(map)
+
+			except Exception:
+				print("[!] - Il y a pas de map sauvegardée")
+				print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
 
 	else:
 		main()
