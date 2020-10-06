@@ -1,10 +1,19 @@
-# conwayGameOfLife
+# **conwayGameOfLife**
 
 Le jeu de la vie de John Horton Conway
 
 ## Pré-requis
 
-- Python 3
+L'installation de **Python 3** est recommandé pour l'éxécution du script
+
+## Dépendances
+
+- JSON
+- sys
+- os.system
+- platform.system
+- random.getrandbits & random.randint
+- sleep
 
 ## Utilisations
 
