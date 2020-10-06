@@ -1,14 +1,11 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-from random import getrandbits, randint
+import json, sys
+from os import system as shell
 from platform import system
+from random import getrandbits, randint
 from time import sleep
-import json, os
-
-class c:
-	g = "\033[32m"
-	e = "\033[0m"
 
 def initMap(x, y):
 	map = []
@@ -23,17 +20,30 @@ def displayMap(map):
 	for item in map:
 		row = ""
 		for value in item:
-			if(value): row += "{}O{} ".format(c.g, c.e)
-			else: row += ". "
+			row += "O " if(value) else ". "
 
 		print(row)
 
 	return True
 
-def update(map):
-	if(system() == "Linux"): os.system('clear')
-	else: os.system('cls')
+def saveJSON(map):
+	try:
+		with open("data.json", 'w') as inFile:
+			json.dump(map, inFile)
 
+		return True
+
+	except Exception:
+		return False
+
+def loadJSON():
+	with open("data.json") as inFile:
+		map = json.load(inFile)
+
+	return map
+
+def update(map):
+	shell('clear' if(system() == "Linux") else 'cls')
 	xmap = initMap(len(map), len(map[0]))
 
 	for x in range(0, len(map)-1):
@@ -49,18 +59,13 @@ def update(map):
 			active += map[x+1][y]
 			active += map[x+1][y+1]
 
-			if((active == 3) or (map[x][y] and (active == 2))): xmap[x][y] = 1
-			else: xmap[x][y] = 0
-
-	with open("data.json", 'w') as outFile:
-		json.dump(xmap, outFile)
+			xmap[x][y] = 1 if((active == 3) or (map[x][y] and (active == 2))) else 0
 
 	return xmap
 
 def main():
 	try:
-		with open("data.json") as inFile:
-			map = json.load(inFile)
+		map = loadJSON()
 
 	except Exception:
 		size = {
@@ -73,9 +78,16 @@ def main():
 	while(True):
 		map = update(map)
 		displayMap(map)
+		saveJSON(map)
 		sleep(.25)
 
 	return True
 
 if __name__ == "__main__":
-	main()
+	if(len(sys.argv) > 1):
+		if(sys.argv[1] in ("-d", "--display")):
+			map = loadJSON()
+			displayMap(map)
+
+	else:
+		main()
