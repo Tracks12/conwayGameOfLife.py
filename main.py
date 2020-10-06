@@ -1,7 +1,8 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-import json, sys
+import json
+from sys import argv
 from os import system as shell
 from platform import system
 from random import getrandbits, randint
@@ -92,19 +93,19 @@ def main():
 	return True
 
 if __name__ == "__main__":
-	if(len(sys.argv) > 1):
-		if(sys.argv[1] in ("-d", "--display")):
+	if(len(argv) > 1):
+		if(argv[1] in ("-d", "--display")):
 			map = loadJSON()
 			displayMap(map)
 
-		elif(sys.argv[1] in ("-n", "--new")):
-			map = initMap(int(sys.argv[2]), int(sys.argv[3]))
+		elif(argv[1] in ("-n", "--new")):
+			map = initMap(int(argv[2]), int(argv[3]))
 			displayMap(map)
 			saveJSON(map)
 
-		elif(sys.argv[1] in ("-a", "--add")):
+		elif(argv[1] in ("-a", "--add")):
 			map = loadJSON()
-			for glider in eval(sys.argv[2]):
+			for glider in eval(argv[2]):
 				map[int(glider[0])-1][int(glider[1])-1] = 1
 
 			saveJSON(map)
