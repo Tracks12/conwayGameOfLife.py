@@ -80,7 +80,7 @@ def main():
 		map = update(map)
 		displayMap(map)
 		saveJSON(map)
-		sleep(.25)
+		sleep(.1)
 
 	return True
 
