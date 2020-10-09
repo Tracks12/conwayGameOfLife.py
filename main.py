@@ -51,14 +51,10 @@ def update(map):
 		for y in range(0, len(map[x])-1):
 			xmap[x][y] = map[x][y]
 			active = 0
-			active += map[x-1][y-1]
-			active += map[x-1][y]
-			active += map[x-1][y+1]
-			active += map[x][y-1]
-			active += map[x][y+1]
-			active += map[x+1][y-1]
-			active += map[x+1][y]
-			active += map[x+1][y+1]
+
+			for i in range(-1, 2):
+				for j in range(-1, 2):
+					active += map[x+i][y+j] if((i != 0) or (j != 0)) else 0
 
 			xmap[x][y] = 1 if((active == 3) or (map[x][y] and (active == 2))) else 0
 
@@ -69,9 +65,12 @@ def main():
 		map = loadJSON()
 
 	except Exception:
+		print("[!] - Il y a pas de map sauvegardée")
+		print("(i) - Création d'une nouvelle map ...")
+
 		size = {
-			'x': int(input("Hauteur de la map: ")),
-			'y': int(input("Largeur de la map: "))
+			'x': int(input("Hauteur <x> : ")),
+			'y': int(input("Largeur <y> : "))
 		}
 
 		map = initMap(size["x"], size["y"])
