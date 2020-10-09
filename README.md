@@ -48,3 +48,7 @@ Et on lance le jeu avec `python main.py`
 ### Remarque
 
 Vous pouvez checker votre configuration avec `python main.py -d` pour afficher la map avec vos cellules actives
+
+## Licence
+
+Code sous license [GPL v3](LICENCE)
