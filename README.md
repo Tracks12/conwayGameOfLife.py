@@ -51,4 +51,4 @@ Vous pouvez checker votre configuration avec `python main.py -d` pour afficher l
 
 ## Licence
 
-Code sous license [GPL v3](LICENCE)
+Code sous license [GPL v3](LICENSE)
