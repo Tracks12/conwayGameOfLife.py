@@ -60,6 +60,65 @@ def update(map):
 
 	return xmap
 
+def arg():
+	args = {
+		"prefix": (
+			("-a", "--add"),
+			("-d", "--display"),
+			("-n", "--new"),
+			("-h", "--help"),
+			("-v", "--version")
+		),
+		"descriptions": (
+			"Insérer une ou plusieur cellules",
+			"Afficher la map enregistrer",
+			"Créer une nouvelle map\n",
+			"Affichage du menu d'aide",
+			"Affichage de la version du programme\n"
+		)
+	}
+
+	if(argv[1] in args["prefix"][-2]):
+		print(" Le jeu de la vie de John Horton Conway")
+		print(" Lancement: python main.py <arg>\n")
+		print(" Arguments:")
+
+		for i in range(0, len(args["prefix"])):
+			print(" {}, {}\t\t{}".format(args["prefix"][i][0], args["prefix"][i][1], args["descriptions"][i]))
+
+	elif(argv[1] in args["prefix"][-1]):
+		print(" V_1.0\n")
+
+	elif(argv[1] in args["prefix"][0]):
+		try:
+			map = loadJSON()
+			for glider in eval(argv[2]):
+				map[int(glider[0])-1][int(glider[1])-1] = 1
+
+			saveJSON(map)
+
+		except Exception:
+			print("[!] - Il y a pas de map sauvegardée")
+			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
+
+	elif(argv[1] in args["prefix"][1]):
+		try:
+			map = loadJSON()
+			displayMap(map)
+
+		except Exception:
+			print("[!] - Il y a pas de map sauvegardée")
+			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
+
+	elif(argv[1] in args["prefix"][2]):
+		try:
+			map = initMap(int(argv[2]), int(argv[3]))
+			displayMap(map)
+			saveJSON(map)
+
+		except Exception:
+			print("[!] - Spécifier les dimension <x> et <y>")
+
 def main():
 	try:
 		map = loadJSON()
@@ -85,35 +144,7 @@ def main():
 
 if __name__ == "__main__":
 	if(len(argv) > 1):
-		if(argv[1] in ("-d", "--display")):
-			try:
-				map = loadJSON()
-				displayMap(map)
-
-			except Exception:
-				print("[!] - Il y a pas de map sauvegardée")
-				print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
-
-		elif(argv[1] in ("-n", "--new")):
-			try:
-				map = initMap(int(argv[2]), int(argv[3]))
-				displayMap(map)
-				saveJSON(map)
-
-			except Exception:
-				print("[!] - Spécifier les dimension <x> et <y>")
-
-		elif(argv[1] in ("-a", "--add")):
-			try:
-				map = loadJSON()
-				for glider in eval(argv[2]):
-					map[int(glider[0])-1][int(glider[1])-1] = 1
-
-				saveJSON(map)
-
-			except Exception:
-				print("[!] - Il y a pas de map sauvegardée")
-				print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
+		arg()
 
 	else:
 		main()
