@@ -63,33 +63,33 @@ def update(map):
 def arg():
 	args = {
 		"prefix": (
-			("-a", "--add"),
-			("-d", "--display"),
-			("-n", "--new"),
-			("-h", "--help"),
-			("-v", "--version")
+			(("-a", "--add"), "[(x, y), ...]"),
+			(("-d", "--display"), ""),
+			(("-n", "--new"), "<x> <y>"),
+			(("-h", "--help"), ""),
+			(("-v", "--version"), "")
 		),
 		"descriptions": (
 			"Insérer une ou plusieur cellules",
-			"Afficher la map enregistrer",
-			"Créer une nouvelle map\n",
-			"Affichage du menu d'aide",
-			"Affichage de la version du programme\n"
+			"\tAfficher la map enregistrer",
+			"\tCréer une nouvelle map\n",
+			"\t\tAffichage du menu d'aide",
+			"\tAffichage de la version du programme\n"
 		)
 	}
 
-	if(argv[1] in args["prefix"][-2]):
+	if(argv[1] in args["prefix"][-2][0]):
 		print(" Le jeu de la vie de John Horton Conway")
 		print(" Lancement: python main.py <arg>\n")
 		print(" Arguments:")
 
 		for i in range(0, len(args["prefix"])):
-			print(" {}, {}\t\t{}".format(args["prefix"][i][0], args["prefix"][i][1], args["descriptions"][i]))
+			print(" {}, {} {} \t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
-	elif(argv[1] in args["prefix"][-1]):
+	elif(argv[1] in args["prefix"][-1][0]):
 		print(" V_1.0\n")
 
-	elif(argv[1] in args["prefix"][0]):
+	elif(argv[1] in args["prefix"][0][0]):
 		try:
 			map = loadJSON()
 			for glider in eval(argv[2]):
@@ -101,7 +101,7 @@ def arg():
 			print("[!] - Il y a pas de map sauvegardée")
 			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
 
-	elif(argv[1] in args["prefix"][1]):
+	elif(argv[1] in args["prefix"][1][0]):
 		try:
 			map = loadJSON()
 			displayMap(map)
@@ -110,7 +110,7 @@ def arg():
 			print("[!] - Il y a pas de map sauvegardée")
 			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
 
-	elif(argv[1] in args["prefix"][2]):
+	elif(argv[1] in args["prefix"][2][0]):
 		try:
 			map = initMap(int(argv[2]), int(argv[3]))
 			displayMap(map)
