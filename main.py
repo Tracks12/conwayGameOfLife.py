@@ -94,9 +94,9 @@ def arg(map):
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
-			"\tInsérer une ou plusieur cellules",
+			"\tInsérer une ou plusieurs cellules",
 			"Insérer une entité",
-			"\t\t\tAfficher la map enregistrer",
+			"\t\t\tAfficher la map enregistrée",
 			"\t\tCréer une nouvelle map\n",
 			"\t\t\tAffichage du menu d'aide",
 			"\t\t\tAffichage de la version du programme\n"
