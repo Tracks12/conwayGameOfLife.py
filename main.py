@@ -1,7 +1,7 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
+import json, re
 from sys import argv
 from os import system as shell
 from platform import system
@@ -142,13 +142,19 @@ def arg(map):
 
 				return False
 
-			entity = {
-				"block"     : [(x, y), (x, y+1), (x+1, y), (x+1, y+1)],
-				"frog"      : [(x, y), (x, y+1), (x, y+2), (x+1, y-1), (x+1, y), (x+1, y+1)],
-				"glider"    : [(x, y), (x, y+1), (x-1, y-1), (x+1, y-1), (x+1, y)],
-				"flowering" : [(x, y), (x, y-2), (x, y+2), (x-1, y-1), (x-1, y), (x-1, y+1), (x+1, y-1), (x+1, y), (x+1, y+1)],
-				"clown"     : [(x-1, y-1), (x-1, y+1), (x, y-1), (x, y+1), (x+1, y-1), (x+1, y), (x+1, y+1)]
-			}
+			try:
+				with open("entity.json", 'r') as outFile:
+					entity = json.load(outFile)
+
+					for item in entity:
+						entity[item].replace("x", str(x))
+						entity[item].replace("y", str(y))
+						entity[item] = eval(entity[item])
+
+			except Exception:
+				print("{}Le fichier d'entités est introuvables".format(Icon.warn))
+
+				return False
 
 			if(argv[2] in entity):
 				for cell in entity[argv[2]]:
