@@ -19,16 +19,30 @@ L'installation de [**Python 3**](https://www.python.org/downloads/) est recomman
 
 ## Utilisations
 
-| Fonctionnalités                  | Commande                                                                            |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| Executer le script               | `$ python main.py`                                                                  |
-| Créer une nouvelle map           | `$ python main.py -n <x> <y>`<br />`$ python main.py --new <x> <y>`                 |
-| Insérer une ou plusieur cellules | `$ python main.py -a "[(x, y), ...]"`<br />`$ python main.py --add "[(x, y), ...]"` |
-| Afficher la map enregistrer      | `$ python main.py -d`<br />`$ python main.py --display`                             |
+| Fonctionnalités                   | Commandes                                                                                |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| Exécuter le script                | `$ python main.py`                                                                       |
+| Créer une nouvelle map            | `$ python main.py -n <x> <y>`<br />`$ python main.py --new <x> <y>`                      |
+| Insérer une ou plusieurs cellules | `$ python main.py -a "[(x, y), ...]"`<br />`$ python main.py --add "[(x, y), ...]"`      |
+| Insérer une entité                | `$ python main.py -A <type> <x> <y>`<br />`$ python main.py --add-entity <type> <x> <y>` |
+| Afficher la map enregistrée       | `$ python main.py -d`<br />`$ python main.py --display`                                  |
 
 ## Sauvegarde
 
-Les maps générés sont sauvegarder automatiquement sous format **JSON** après chaque mise à jour ce celle-ci dans le fichier `data.json`
+Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier `data.json`
+
+### Les entités
+
+De même que pour la map, les entités sont stockées dans le fichier `entity.json` au format **JSON**
+
+Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous:
+
+```json
+{
+  "nom de l'entité": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]",
+  ...
+}
+```
 
 ## Exemples d'utilisations
 
@@ -37,17 +51,19 @@ Les maps générés sont sauvegarder automatiquement sous format **JSON** après
 On génère une nouvelle map avec `python main.py -n 50 50`
 
 On ajoute les cellules active de sorte à former une entité:
-- **Block**: `python main.py -a "[(2,1), (2,2), (3,1), (3,2)]"`
+
+- **Bloc**: `python main.py -a "[(2,1), (2,2), (3,1), (3,2)]"`
 - **Grenouille**: `python main.py -a "[(2,1), (3,1), (4,2), (3,4), (2,4), (1,3)]"`
 - **Planeur**: `python main.py -a "[(1,1), (2,2), (2,3), (3,1), (3,2)]"`
-- **Départ de floraison**: `python main.py -a "[(10, 7), (9, 8), (11, 8), (9, 9), (10, 9), (11, 9), (9, 10), (11, 10), (10, 11)]"`
-- **Le clown**: `python main.py -a "[(26, 24), (25, 24), (24, 24), (26, 25), (24, 26), (25, 26), (26, 26)]"`
 
 Et on lance le jeu avec `python main.py`
 
 ### Remarque
 
-Vous pouvez checker votre configuration avec `python main.py -d` pour afficher la map avec vos cellules actives
+- Vous pouvez checker votre configuration avec `python main.py -d` pour afficher la map avec vos cellules actives
+- Depuis la version 2.0, vous pouvez maintenant enregistrer une entité complète dans `entity.json` et l'ajouter sur la map comme ceci:
+  - **Départ de floraison**: `python main.py -A flowering 25 25`
+  - **Le clown**: `python main.py -A clown 25 25`
 
 ## Licence
 
