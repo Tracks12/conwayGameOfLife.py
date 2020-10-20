@@ -50,6 +50,11 @@ class Map:
 
 		return True
 
+	def addCell(self, x, y):
+		self.map[x-1][y-1] = 1
+
+		return True
+
 	def update(self):
 		shell('clear' if(system() == "Linux") else 'cls')
 		xmap = self.makeMap(len(self.map), len(self.map[0]))
@@ -68,7 +73,7 @@ class Map:
 
 		return True
 
-	def displayMap(self):
+	def display(self):
 		for item in self.map:
 			row = ""
 			for value in item:
@@ -82,17 +87,19 @@ def arg(map):
 	args = {
 		"prefix": (
 			(("-a", "--add"), "[(x, y), ...]"),
+			(("-A", "--add-entity"), "<type> <x> <y>"),
 			(("-d", "--display"), ""),
 			(("-n", "--new"), "<x> <y>"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
-			"Insérer une ou plusieur cellules",
-			"\tAfficher la map enregistrer",
-			"\tCréer une nouvelle map\n",
-			"\t\tAffichage du menu d'aide",
-			"\tAffichage de la version du programme\n"
+			"\tInsérer une ou plusieur cellules",
+			"Insérer une entité",
+			"\t\t\tAfficher la map enregistrer",
+			"\t\tCréer une nouvelle map\n",
+			"\t\t\tAffichage du menu d'aide",
+			"\t\t\tAffichage de la version du programme\n"
 		)
 	}
 
@@ -102,17 +109,23 @@ def arg(map):
 		print(" Arguments:")
 
 		for i in range(0, len(args["prefix"])):
-			print(" {}, {} {} \t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
+			print(" {}, {} {}\t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.0 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
 		if(map.loadJSON()):
-			for glider in eval(argv[2]):
-				map.map[int(glider[0])-1][int(glider[1])-1] = 1
+			try:
+				for cell in eval(argv[2]):
+					map.addCell(int(cell[0]), int(cell[1]))
 
-			map.saveJSON()
+				map.saveJSON()
+
+			except Exception:
+				print("{}Coordonnées manquantes".format(Icon.warn))
+
+				return False
 
 		else:
 			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
@@ -120,16 +133,46 @@ def arg(map):
 
 	elif(argv[1] in args["prefix"][1][0]):
 		if(map.loadJSON()):
-			map.displayMap()
+			try:
+				x = int(argv[3])
+				y = int(argv[4])
+
+			except Exception:
+				print("{}Les coordonnées de position doivent être des entiers".format(Icon.warn))
+
+				return False
+
+			entity = {
+				"block"     : [(x, y), (x, y+1), (x+1, y), (x+1, y+1)],
+				"frog"      : [(x, y), (x, y+1), (x, y+2), (x+1, y-1), (x+1, y), (x+1, y+1)],
+				"glider"    : [(x, y), (x, y+1), (x-1, y-1), (x+1, y-1), (x+1, y)],
+				"flowering" : [(x, y), (x, y-2), (x, y+2), (x-1, y-1), (x-1, y), (x-1, y+1), (x+1, y-1), (x+1, y), (x+1, y+1)],
+				"clown"     : [(x-1, y-1), (x-1, y+1), (x, y-1), (x, y+1), (x+1, y-1), (x+1, y), (x+1, y+1)]
+			}
+
+			if(argv[2] in entity):
+				for cell in entity[argv[2]]:
+					map.addCell(cell[0], cell[1])
+
+				map.display()
+				map.saveJSON()
 
 		else:
 			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
 
 	elif(argv[1] in args["prefix"][2][0]):
+		if(map.loadJSON()):
+			map.display()
+
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+
+	elif(argv[1] in args["prefix"][3][0]):
 		try:
 			map.initMap(int(argv[2]), int(argv[3]))
-			map.displayMap()
+			map.display()
 			map.saveJSON()
 
 		except Exception:
@@ -156,7 +199,7 @@ def main(map):
 
 	while(True):
 		map.update()
-		map.displayMap()
+		map.display()
 		map.saveJSON()
 		sleep(.1)
 
