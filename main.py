@@ -8,24 +8,8 @@ from platform import system
 from random import getrandbits, randint
 from time import sleep
 
-class Color:
-	if(system() == "Linux"):
-		bold   = "\033[1m"
-		italic = "\033[3m"
-
-		red    = "\033[31m"
-		green  = "\033[32m"
-		blue   = "\033[34m"
-		yellow = "\033[33m"
-
-		end    = "\033[0m"
-
-	else:
-		bold = italic = red = green = blue = yellow = end = ""
-
-class Icons:
-	warn = " {}{}[!]{} - ".format(Color.bold, Color.red, Color.end)
-	info = " {}{}(i){} - ".format(Color.bold, Color.blue, Color.end)
+from core.color import Color
+from core.icon import Icon
 
 class Map:
 	def __init__(self, path):
@@ -131,16 +115,16 @@ def arg(map):
 			map.saveJSON()
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
 
 	elif(argv[1] in args["prefix"][1][0]):
 		if(map.loadJSON()):
 			map.displayMap()
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
 
 	elif(argv[1] in args["prefix"][2][0]):
 		try:
@@ -149,14 +133,14 @@ def arg(map):
 			map.saveJSON()
 
 		except Exception:
-			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
+			print("{}Spécifier les dimension <x> et <y>".format(Icon.warn))
 
 	return True
 
 def main(map):
 	if(not map.loadJSON()):
-		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-		print("{}Création d'une nouvelle map ...".format(Icons.info))
+		print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+		print("{}Création d'une nouvelle map ...".format(Icon.info))
 
 		while("size" not in locals()):
 			try:
@@ -166,7 +150,7 @@ def main(map):
 				}
 
 			except Exception:
-				print("{}La valeur doit être un entier".format(Icons.warn))
+				print("{}La valeur doit être un entier".format(Icon.warn))
 
 		map.initMap(size["x"], size["y"])
 
