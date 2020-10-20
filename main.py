@@ -8,59 +8,78 @@ from platform import system
 from random import getrandbits, randint
 from time import sleep
 
-def initMap(x, y):
-	map = []
-	for i in range(0, x):
-		map.append([])
-		for j in range(0, y):
-			map[i].append(0)
+class Icons:
+	warn = " [!] - "
+	info = " (i) - "
 
-	return map
+class Map:
+	def __init__(self, path):
+		self.path = path
+		self.map = []
 
-def displayMap(map):
-	for item in map:
-		row = ""
-		for value in item:
-			row += "O " if(value) else ". "
+	def saveJSON(self):
+		try:
+			with open("data.json", 'w') as inFile:
+				json.dump(self.map, inFile)
 
-		print(row)
+			return True
 
-	return True
+		except Exception:
+			return False
 
-def saveJSON(map):
-	try:
-		with open("data.json", 'w') as inFile:
-			json.dump(map, inFile)
+	def loadJSON(self):
+		try:
+			with open(self.path) as outFile:
+				self.map = json.load(outFile)
+
+			return True
+
+		except Exception:
+			return False
+
+	def makeMap(self, x, y):
+		map = []
+		for i in range(0, x):
+			map.append([])
+			for j in range(0, y):
+				map[i].append(0)
+
+		return map
+
+	def initMap(self, x, y):
+		self.map = self.makeMap(x, y)
 
 		return True
 
-	except Exception:
-		return False
+	def update(self):
+		shell('clear' if(system() == "Linux") else 'cls')
+		xmap = self.makeMap(len(self.map), len(self.map[0]))
 
-def loadJSON():
-	with open("data.json") as inFile:
-		map = json.load(inFile)
+		for x in range(0, len(self.map)-1):
+			for y in range(0, len(self.map[x])-1):
+				active = 0
 
-	return map
+				for i in range(-1, 2):
+					for j in range(-1, 2):
+						active += self.map[x+i][y+j] if((i != 0) or (j != 0)) else 0
 
-def update(map):
-	shell('clear' if(system() == "Linux") else 'cls')
-	xmap = initMap(len(map), len(map[0]))
+				xmap[x][y] = 1 if((active == 3) or (self.map[x][y] and (active == 2))) else 0
 
-	for x in range(0, len(map)-1):
-		for y in range(0, len(map[x])-1):
-			xmap[x][y] = map[x][y]
-			active = 0
+		self.map = xmap
 
-			for i in range(-1, 2):
-				for j in range(-1, 2):
-					active += map[x+i][y+j] if((i != 0) or (j != 0)) else 0
+		return True
 
-			xmap[x][y] = 1 if((active == 3) or (map[x][y] and (active == 2))) else 0
+	def displayMap(self):
+		for item in self.map:
+			row = ""
+			for value in item:
+				row += "O " if(value) else ". "
 
-	return xmap
+			print(row)
 
-def arg():
+		return True
+
+def arg(map):
 	args = {
 		"prefix": (
 			(("-a", "--add"), "[(x, y), ...]"),
@@ -87,64 +106,68 @@ def arg():
 			print(" {}, {} {} \t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" V_1.0\n")
+		print(" conwayGameOfLife.py 1.0\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
-		try:
-			map = loadJSON()
+		if(map.loadJSON()):
 			for glider in eval(argv[2]):
-				map[int(glider[0])-1][int(glider[1])-1] = 1
+				map.map[int(glider[0])-1][int(glider[1])-1] = 1
 
-			saveJSON(map)
+			map.saveJSON()
 
-		except Exception:
-			print("[!] - Il y a pas de map sauvegardée")
-			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][1][0]):
-		try:
-			map = loadJSON()
-			displayMap(map)
+		if(map.loadJSON()):
+			map.displayMap()
 
-		except Exception:
-			print("[!] - Il y a pas de map sauvegardée")
-			print('(i) - Créer une nouvelle map avec "python main.py -n <x> <y>"')
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][2][0]):
 		try:
-			map = initMap(int(argv[2]), int(argv[3]))
-			displayMap(map)
-			saveJSON(map)
+			map.initMap(int(argv[2]), int(argv[3]))
+			map.displayMap()
+			map.saveJSON()
 
 		except Exception:
-			print("[!] - Spécifier les dimension <x> et <y>")
+			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
-def main():
-	try:
-		map = loadJSON()
+	return True
 
-	except Exception:
-		print("[!] - Il y a pas de map sauvegardée")
-		print("(i) - Création d'une nouvelle map ...")
+def main(map):
+	if(not map.loadJSON()):
+		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+		print("{}Création d'une nouvelle map ...".format(Icons.info))
 
-		size = {
-			'x': int(input("Hauteur <x> : ")),
-			'y': int(input("Largeur <y> : "))
-		}
+		while("size" not in locals()):
+			try:
+				size = {
+					'x': int(input("Hauteur <x> : ")),
+					'y': int(input("Largeur <y> : "))
+				}
 
-		map = initMap(size["x"], size["y"])
+			except Exception:
+				print("{}La valeur doit être un entier".format(Icons.warn))
+
+		map.initMap(size["x"], size["y"])
 
 	while(True):
-		map = update(map)
-		displayMap(map)
-		saveJSON(map)
+		map.update()
+		map.displayMap()
+		map.saveJSON()
 		sleep(.1)
 
 	return True
 
 if __name__ == "__main__":
+	map = Map("data.json")
+
 	if(len(argv) > 1):
-		arg()
+		arg(map)
 
 	else:
-		main()
+		main(map)
