@@ -8,9 +8,24 @@ from platform import system
 from random import getrandbits, randint
 from time import sleep
 
+class Color:
+	if(system() == "Linux"):
+		bold   = "\033[1m"
+		italic = "\033[3m"
+
+		red    = "\033[31m"
+		green  = "\033[32m"
+		blue   = "\033[34m"
+		yellow = "\033[33m"
+
+		end    = "\033[0m"
+
+	else:
+		bold = italic = red = green = blue = yellow = end = ""
+
 class Icons:
-	warn = " [!] - "
-	info = " (i) - "
+	warn = " {}{}[!]{} - ".format(Color.bold, Color.red, Color.end)
+	info = " {}{}(i){} - ".format(Color.bold, Color.blue, Color.end)
 
 class Map:
 	def __init__(self, path):
@@ -73,7 +88,7 @@ class Map:
 		for item in self.map:
 			row = ""
 			for value in item:
-				row += "O " if(value) else ". "
+				row += "{}O{} ".format(Color.green, Color.end) if(value) else ". "
 
 			print(row)
 
@@ -106,7 +121,7 @@ def arg(map):
 			print(" {}, {} {} \t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 1.0\n")
+		print(" conwayGameOfLife.py 2.0 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
 		if(map.loadJSON()):
