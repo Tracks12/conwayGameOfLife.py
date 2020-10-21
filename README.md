@@ -29,11 +29,11 @@ L'installation de [**Python 3**](https://www.python.org/downloads/) est recomman
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier `data.json`
+Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier [`data.json`](data.json)
 
 ### Les entités
 
-De même que pour la map, les entités sont stockées dans le fichier `entity.json` au format **JSON**
+De même que pour la map, les entités sont stockées dans le fichier [`entity.json`](entity.json) au format **JSON**
 
 Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous:
 
