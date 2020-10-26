@@ -1,147 +1,69 @@
-#!/bin/python3
-# -*- coding: utf-8 -*-
+# **conwayGameOfLife**
 
-import json
-from sys import argv
-from time import sleep
+Le jeu de la vie de John Horton Conway
 
-# Importation des dépendances internes
-from core.icon import Icon
-from core.map import Map
+[https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 
-def arg(map): # Fonction d'entrée des arguments
-	args = {
-		"prefix": (
-			(("-a", "--add"), "[(x, y), ...]"),
-			(("-A", "--add-entity"), "<type> <x> <y>"),
-			(("-d", "--display"), ""),
-			(("-n", "--new"), "<x> <y>"),
-			(("-h", "--help"), ""),
-			(("-v", "--version"), "")
-		),
-		"descriptions": (
-			"\tInsérer une ou plusieurs cellules",
-			"Insérer une entité",
-			"\t\t\tAfficher la map enregistrée",
-			"\t\tCréer une nouvelle map\n",
-			"\t\t\tAffichage du menu d'aide",
-			"\t\t\tAffichage de la version du programme\n"
-		)
-	}
+## Pré-requis
 
-	if(argv[1] in args["prefix"][-2][0]):
-		print(" Le jeu de la vie de John Horton Conway")
-		print(" Lancement: python main.py <arg>\n")
-		print(" Arguments:")
+L'installation de [**Python 3**](https://www.python.org/downloads/) est recommandé pour l'éxécution du script
 
-		for i in range(0, len(args["prefix"])):
-			print(" {}, {} {}\t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
+## Dépendances
 
-	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 2.0 - Florian Cardinal\n")
+- [json](https://docs.python.org/3/library/json.html)
+- [os.system](https://docs.python.org/3/library/os.html#os.system)
+- [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv)
+- [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
+- [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 
-	elif(argv[1] in args["prefix"][0][0]):
-		if(map.loadJSON()):
-			try:
-				for cell in eval(argv[2]):
-					map.addCell(int(cell[0]), int(cell[1]))
+## Utilisations
 
-				map.saveJSON()
+| Fonctionnalités                   | Commandes                                                                                |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| Exécuter le script                | `$ python main.py`                                                                       |
+| Créer une nouvelle map            | `$ python main.py -n <x> <y>`<br />`$ python main.py --new <x> <y>`                      |
+| Insérer une ou plusieurs cellules | `$ python main.py -a "[(x, y), ...]"`<br />`$ python main.py --add "[(x, y), ...]"`      |
+| Insérer une entité                | `$ python main.py -A <type> <x> <y>`<br />`$ python main.py --add-entity <type> <x> <y>` |
+| Afficher la map enregistrée       | `$ python main.py -d`<br />`$ python main.py --display`                                  |
 
-			except Exception:
-				print("{}Coordonnées manquantes".format(Icon.warn))
+## Sauvegarde
 
-				return False
+Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier [`data.json`](data.json)
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+### Les entités
 
-	elif(argv[1] in args["prefix"][1][0]):
-		if(map.loadJSON()):
-			try:
-				x = int(argv[3])
-				y = int(argv[4])
+De même que pour la map, les entités sont stockées dans le fichier [`entity.json`](entity.json) au format **JSON**
 
-			except Exception:
-				print("{}Les coordonnées de position doivent être des entiers".format(Icon.warn))
+Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous:
 
-				return False
+```json
+{
+  "nom de l'entité": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]",
+  ...
+}
+```
 
-			try:
-				with open("entity.json", 'r') as outFile:
-					entity = json.load(outFile)
+## Exemples d'utilisations
 
-					for item in entity:
-						entity[item].replace("x", str(x))
-						entity[item].replace("y", str(y))
-						entity[item] = eval(entity[item])
+![gamePlay-example](example.gif)
 
-			except Exception:
-				print("{}Le fichier d'entités est introuvables".format(Icon.warn))
+On génère une nouvelle map avec `python main.py -n 50 50`
 
-				return False
+On ajoute les cellules active de sorte à former une entité:
 
-			if(argv[2] in entity):
-				for cell in entity[argv[2]]:
-					map.addCell(cell[0], cell[1])
+- **Bloc**: `python main.py -a "[(2,1), (2,2), (3,1), (3,2)]"`
+- **Grenouille**: `python main.py -a "[(2,1), (3,1), (4,2), (3,4), (2,4), (1,3)]"`
+- **Planeur**: `python main.py -a "[(1,1), (2,2), (2,3), (3,1), (3,2)]"`
 
-				map.display()
-				map.saveJSON()
+Et on lance le jeu avec `python main.py`
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+### Remarque
 
-	elif(argv[1] in args["prefix"][2][0]):
-		if(map.loadJSON()):
-			map.display()
+- Vous pouvez checker votre configuration avec `python main.py -d` pour afficher la map avec vos cellules actives
+- Depuis la version 2.0, vous pouvez maintenant enregistrer une entité complète dans `entity.json` et l'ajouter sur la map comme ceci:
+  - **Départ de floraison**: `python main.py -A flowering 25 25`
+  - **Le clown**: `python main.py -A clown 25 25`
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+## Licence
 
-	elif(argv[1] in args["prefix"][3][0]):
-		try:
-			map.initMap(int(argv[2]), int(argv[3]))
-			map.display()
-			map.saveJSON()
-
-		except Exception:
-			print("{}Spécifier les dimension <x> et <y>".format(Icon.warn))
-
-	return True
-
-def main(map): # Fonction principale de l'execution du programme
-	if(not map.loadJSON()):
-		print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-		print("{}Création d'une nouvelle map ...".format(Icon.info))
-
-		while("size" not in locals()):
-			try:
-				size = {
-					'x': int(input("Hauteur <x> : ")),
-					'y': int(input("Largeur <y> : "))
-				}
-
-			except Exception:
-				print("{}La valeur doit être un entier".format(Icon.warn))
-
-		map.initMap(size["x"], size["y"])
-
-	while(True):
-		map.update()
-		map.display()
-		map.saveJSON()
-		sleep(.1)
-
-	return True
-
-if __name__ == "__main__":
-	map = Map("data.json") # Chargement de la map depuis "data.json"
-
-	if(len(argv) > 1):
-		arg(map)
-
-	else:
-		main(map)
+Code sous license [GPL v3](LICENSE)
