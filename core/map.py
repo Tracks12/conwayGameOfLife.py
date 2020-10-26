@@ -1,6 +1,10 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
+# Module de l'objet Map
+# ce module contient les fonctionnalités de sauvegarde et de chargement de map
+# ainsi que la mise à jour de la map
+
 import json
 from os import system as shell
 from platform import system
@@ -12,7 +16,7 @@ class Map:
 		self.path = path
 		self.map = []
 
-	def saveJSON(self):
+	def saveJSON(self): # Sauvegarde dans un fichier
 		try:
 			with open("data.json", 'w') as inFile:
 				json.dump(self.map, inFile)
@@ -22,7 +26,7 @@ class Map:
 		except Exception:
 			return False
 
-	def loadJSON(self):
+	def loadJSON(self): # Chargement depuis un fichier
 		try:
 			with open(self.path) as outFile:
 				self.map = json.load(outFile)
@@ -32,7 +36,7 @@ class Map:
 		except Exception:
 			return False
 
-	def makeMap(self, x, y):
+	def makeMap(self, x, y): # Création d'une map sur un format pré-défini
 		map = []
 		for i in range(0, x):
 			map.append([])
@@ -41,17 +45,17 @@ class Map:
 
 		return map
 
-	def initMap(self, x, y):
+	def initMap(self, x, y): # Initialisation de la map dans l'objet
 		self.map = self.makeMap(x, y)
 
 		return True
 
-	def addCell(self, x, y):
+	def addCell(self, x, y): # Ajout de cellule(s) active(s)
 		self.map[x-1][y-1] = 1
 
 		return True
 
-	def update(self):
+	def update(self): # Mise à jour de la map
 		shell('clear' if(system() == "Linux") else 'cls')
 		xmap = self.makeMap(len(self.map), len(self.map[0]))
 
@@ -69,7 +73,7 @@ class Map:
 
 		return True
 
-	def display(self):
+	def display(self): # Affichage de la map
 		for item in self.map:
 			row = ""
 			for value in item:

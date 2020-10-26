@@ -5,10 +5,11 @@ import json
 from sys import argv
 from time import sleep
 
+# Importation des dépendances internes
 from core.icon import Icon
 from core.map import Map
 
-def arg(map):
+def arg(map): # Fonction d'entrée des arguments
 	args = {
 		"prefix": (
 			(("-a", "--add"), "[(x, y), ...]"),
@@ -111,7 +112,7 @@ def arg(map):
 
 	return True
 
-def main(map):
+def main(map): # Fonction principale de l'execution du programme
 	if(not map.loadJSON()):
 		print("{}Il y a pas de map sauvegardée".format(Icon.warn))
 		print("{}Création d'une nouvelle map ...".format(Icon.info))
@@ -137,7 +138,7 @@ def main(map):
 	return True
 
 if __name__ == "__main__":
-	map = Map("data.json")
+	map = Map("data.json") # Chargement de la map depuis "data.json"
 
 	if(len(argv) > 1):
 		arg(map)
