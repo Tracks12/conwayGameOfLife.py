@@ -1,37 +1,147 @@
-## Welcome to GitHub Pages
+#!/bin/python3
+# -*- coding: utf-8 -*-
 
-You can use the [editor on GitHub](https://github.com/Tracks12/conwayGameOfLife.py/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+import json
+from sys import argv
+from time import sleep
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# Importation des dépendances internes
+from core.icon import Icon
+from core.map import Map
 
-### Markdown
+def arg(map): # Fonction d'entrée des arguments
+	args = {
+		"prefix": (
+			(("-a", "--add"), "[(x, y), ...]"),
+			(("-A", "--add-entity"), "<type> <x> <y>"),
+			(("-d", "--display"), ""),
+			(("-n", "--new"), "<x> <y>"),
+			(("-h", "--help"), ""),
+			(("-v", "--version"), "")
+		),
+		"descriptions": (
+			"\tInsérer une ou plusieurs cellules",
+			"Insérer une entité",
+			"\t\t\tAfficher la map enregistrée",
+			"\t\tCréer une nouvelle map\n",
+			"\t\t\tAffichage du menu d'aide",
+			"\t\t\tAffichage de la version du programme\n"
+		)
+	}
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+	if(argv[1] in args["prefix"][-2][0]):
+		print(" Le jeu de la vie de John Horton Conway")
+		print(" Lancement: python main.py <arg>\n")
+		print(" Arguments:")
 
-```markdown
-Syntax highlighted code block
+		for i in range(0, len(args["prefix"])):
+			print(" {}, {} {}\t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
-# Header 1
-## Header 2
-### Header 3
+	elif(argv[1] in args["prefix"][-1][0]):
+		print(" conwayGameOfLife.py 2.0 - Florian Cardinal\n")
 
-- Bulleted
-- List
+	elif(argv[1] in args["prefix"][0][0]):
+		if(map.loadJSON()):
+			try:
+				for cell in eval(argv[2]):
+					map.addCell(int(cell[0]), int(cell[1]))
 
-1. Numbered
-2. List
+				map.saveJSON()
 
-**Bold** and _Italic_ and `Code` text
+			except Exception:
+				print("{}Coordonnées manquantes".format(Icon.warn))
 
-[Link](url) and ![Image](src)
-```
+				return False
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
 
-### Jekyll Themes
+	elif(argv[1] in args["prefix"][1][0]):
+		if(map.loadJSON()):
+			try:
+				x = int(argv[3])
+				y = int(argv[4])
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Tracks12/conwayGameOfLife.py/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+			except Exception:
+				print("{}Les coordonnées de position doivent être des entiers".format(Icon.warn))
 
-### Support or Contact
+				return False
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+			try:
+				with open("entity.json", 'r') as outFile:
+					entity = json.load(outFile)
+
+					for item in entity:
+						entity[item].replace("x", str(x))
+						entity[item].replace("y", str(y))
+						entity[item] = eval(entity[item])
+
+			except Exception:
+				print("{}Le fichier d'entités est introuvables".format(Icon.warn))
+
+				return False
+
+			if(argv[2] in entity):
+				for cell in entity[argv[2]]:
+					map.addCell(cell[0], cell[1])
+
+				map.display()
+				map.saveJSON()
+
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+
+	elif(argv[1] in args["prefix"][2][0]):
+		if(map.loadJSON()):
+			map.display()
+
+		else:
+			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+
+	elif(argv[1] in args["prefix"][3][0]):
+		try:
+			map.initMap(int(argv[2]), int(argv[3]))
+			map.display()
+			map.saveJSON()
+
+		except Exception:
+			print("{}Spécifier les dimension <x> et <y>".format(Icon.warn))
+
+	return True
+
+def main(map): # Fonction principale de l'execution du programme
+	if(not map.loadJSON()):
+		print("{}Il y a pas de map sauvegardée".format(Icon.warn))
+		print("{}Création d'une nouvelle map ...".format(Icon.info))
+
+		while("size" not in locals()):
+			try:
+				size = {
+					'x': int(input("Hauteur <x> : ")),
+					'y': int(input("Largeur <y> : "))
+				}
+
+			except Exception:
+				print("{}La valeur doit être un entier".format(Icon.warn))
+
+		map.initMap(size["x"], size["y"])
+
+	while(True):
+		map.update()
+		map.display()
+		map.saveJSON()
+		sleep(.1)
+
+	return True
+
+if __name__ == "__main__":
+	map = Map("data.json") # Chargement de la map depuis "data.json"
+
+	if(len(argv) > 1):
+		arg(map)
+
+	else:
+		main(map)
