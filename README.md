@@ -14,7 +14,6 @@ L'installation de [**Python 3**](https://www.python.org/downloads/) est recomman
 - [os.system](https://docs.python.org/3/library/os.html#os.system)
 - [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
-- [random.getrandbits](https://docs.python.org/3/library/random.html#random.getrandbits) & [random.randint](https://docs.python.org/3/library/random.html#random.randint)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 
 ## Utilisations
