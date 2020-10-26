@@ -1,6 +1,8 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
+# Module de coloration pour les système Linux/Unix
+
 from platform import system
 
 class Color:

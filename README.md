@@ -14,7 +14,6 @@ L'installation de [**Python 3**](https://www.python.org/downloads/) est recomman
 - [os.system](https://docs.python.org/3/library/os.html#os.system)
 - [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
-- [random.getrandbits](https://docs.python.org/3/library/random.html#random.getrandbits) & [random.randint](https://docs.python.org/3/library/random.html#random.randint)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 
 ## Utilisations
@@ -29,11 +28,11 @@ L'installation de [**Python 3**](https://www.python.org/downloads/) est recomman
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier `data.json`
+Les maps générées sont sauvegardées automatiquement sous format **JSON** après chaque mise à jour de celle-ci dans le fichier [`data.json`](data.json)
 
 ### Les entités
 
-De même que pour la map, les entités sont stockées dans le fichier `entity.json` au format **JSON**
+De même que pour la map, les entités sont stockées dans le fichier [`entity.json`](entity.json) au format **JSON**
 
 Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous:
 
