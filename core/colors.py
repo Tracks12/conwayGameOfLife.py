@@ -5,7 +5,7 @@
 
 from platform import system
 
-class Color:
+class Colors:
 	if(system() == "Linux"):
 		bold   = "\033[1m"
 		italic = "\033[3m"

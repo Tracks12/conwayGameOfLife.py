@@ -6,10 +6,10 @@ from sys import argv
 from time import sleep
 
 # Importation des dépendances internes
-from core.icon import Icon
+from core.icons import Icons
 from core.map import Map
 
-def arg(map): # Fonction d'entrée des arguments
+def arg(map = Map()): # Fonction d'entrée des arguments
 	args = {
 		"prefix": (
 			(("-a", "--add"), "[(x, y), ...]"),
@@ -49,13 +49,13 @@ def arg(map): # Fonction d'entrée des arguments
 				map.saveJSON()
 
 			except Exception:
-				print("{}Coordonnées manquantes".format(Icon.warn))
+				print("{}Coordonnées manquantes".format(Icons.warn))
 
-				return False
+				return(False)
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][1][0]):
 		if(map.loadJSON()):
@@ -64,9 +64,9 @@ def arg(map): # Fonction d'entrée des arguments
 				y = int(argv[4])
 
 			except Exception:
-				print("{}Les coordonnées de position doivent être des entiers".format(Icon.warn))
+				print("{}Les coordonnées de position doivent être des entiers".format(Icons.warn))
 
-				return False
+				return(False)
 
 			try:
 				with open("entity.json", 'r') as outFile:
@@ -78,9 +78,9 @@ def arg(map): # Fonction d'entrée des arguments
 						entity[item] = eval(entity[item])
 
 			except Exception:
-				print("{}Le fichier d'entités est introuvables".format(Icon.warn))
+				print("{}Le fichier d'entités est introuvables".format(Icons.warn))
 
-				return False
+				return(False)
 
 			if(argv[2] in entity):
 				for cell in entity[argv[2]]:
@@ -90,16 +90,16 @@ def arg(map): # Fonction d'entrée des arguments
 				map.saveJSON()
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][2][0]):
 		if(map.loadJSON()):
 			map.display()
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icon.info))
+			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][3][0]):
 		try:
@@ -108,24 +108,27 @@ def arg(map): # Fonction d'entrée des arguments
 			map.saveJSON()
 
 		except Exception:
-			print("{}Spécifier les dimension <x> et <y>".format(Icon.warn))
+			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
-	return True
+	return(True)
 
-def main(map): # Fonction principale de l'execution du programme
+def main(map = Map()): # Fonction principale de l'execution du programme
 	if(not map.loadJSON()):
-		print("{}Il y a pas de map sauvegardée".format(Icon.warn))
-		print("{}Création d'une nouvelle map ...".format(Icon.info))
+		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+		print("{}Création d'une nouvelle map ...".format(Icons.info))
 
 		while("size" not in locals()):
 			try:
 				size = {
-					'x': int(input("Hauteur <x> : ")),
-					'y': int(input("Largeur <y> : "))
+					'x': int(input("Hauteur <x> (> 5): ")),
+					'y': int(input("Largeur <y> (> 5): "))
 				}
 
+				if(size["x"] < 5): del size
+				if(size["y"] < 5): del size
+
 			except Exception:
-				print("{}La valeur doit être un entier".format(Icon.warn))
+				print("{}La valeur doit être un entier et supérieur à 5".format(Icons.warn))
 
 		map.initMap(size["x"], size["y"])
 
@@ -135,13 +138,7 @@ def main(map): # Fonction principale de l'execution du programme
 		map.saveJSON()
 		sleep(.1)
 
-	return True
+	return(True)
 
 if __name__ == "__main__":
-	map = Map("data.json") # Chargement de la map depuis "data.json"
-
-	if(len(argv) > 1):
-		arg(map)
-
-	else:
-		main(map)
+	arg() if(len(argv) > 1) else main()
