@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
-from sys import argv
-from time import sleep
+from sys import argv, version_info
 
 # Importation des dépendances internes
 from core.icons import Icons
@@ -38,15 +37,12 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 			print(" {}, {} {}\t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 2.0 - Florian Cardinal\n")
+		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
 		if(map.loadJSON()):
 			try:
-				for cell in eval(argv[2]):
-					map.addCell(int(cell[0]), int(cell[1]))
-
-				map.saveJSON()
+				map.addCells(eval(argv[2]))
 
 			except Exception:
 				print("{}Coordonnées manquantes".format(Icons.warn))
@@ -83,11 +79,8 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 				return(False)
 
 			if(argv[2] in entity):
-				for cell in entity[argv[2]]:
-					map.addCell(cell[0], cell[1])
-
+				map.addCells(entity[argv[2]])
 				map.display()
-				map.saveJSON()
 
 		else:
 			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
@@ -105,7 +98,6 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 		try:
 			map.initMap(int(argv[2]), int(argv[3]))
 			map.display()
-			map.saveJSON()
 
 		except Exception:
 			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
@@ -124,19 +116,15 @@ def main(map = Map()): # Fonction principale de l'execution du programme
 					'y': int(input("Largeur <y> (> 5): "))
 				}
 
-				if(size["x"] < 5): del size
-				if(size["y"] < 5): del size
+				if((size["x"] < 5) or (size["y"] < 5)):
+					del size
 
-			except Exception:
+			except Exception as e:
 				print("{}La valeur doit être un entier et supérieur à 5".format(Icons.warn))
 
 		map.initMap(size["x"], size["y"])
 
-	while(True):
-		map.update()
-		map.display()
-		map.saveJSON()
-		sleep(.1)
+	map.start()
 
 	return(True)
 
