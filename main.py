@@ -6,9 +6,14 @@ from sys import argv, version_info
 
 # Importation des dépendances internes
 from core.icons import Icons
+
+if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
+	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
+	exit()
+
 from core.map import Map
 
-def arg(map = Map()): # Fonction d'entrée des arguments
+def arg(map): # Fonction d'entrée des arguments
 	args = {
 		"prefix": (
 			(("-a", "--add"), "[(x, y), ...]"),
@@ -40,7 +45,7 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
-		if(map.loadJSON()):
+		if(map.loaded):
 			try:
 				map.addCells(eval(argv[2]))
 
@@ -54,7 +59,7 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][1][0]):
-		if(map.loadJSON()):
+		if(map.loaded):
 			try:
 				x = int(argv[3])
 				y = int(argv[4])
@@ -87,7 +92,7 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
 	elif(argv[1] in args["prefix"][2][0]):
-		if(map.loadJSON()):
+		if(map.loaded):
 			map.display()
 
 		else:
@@ -104,8 +109,8 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 
 	return(True)
 
-def main(map = Map()): # Fonction principale de l'execution du programme
-	if(not map.loadJSON()):
+def main(map): # Fonction principale de l'execution du programme
+	if(not map.loaded):
 		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
 		print("{}Création d'une nouvelle map ...".format(Icons.info))
 
@@ -129,4 +134,5 @@ def main(map = Map()): # Fonction principale de l'execution du programme
 	return(True)
 
 if __name__ == "__main__":
-	arg() if(len(argv) > 1) else main()
+	map = Map()
+	arg(map) if(len(argv) > 1) else main(map)

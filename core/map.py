@@ -14,20 +14,42 @@ from core.colors import Colors
 
 class Map:
 	# Fichier de chargement par défaut: "data.json"
-	def __init__(self, path = "data.json"):
-		self.__path	= path
-		self.map	= []
+	def __init__(self, path = "data"):
+		self.__path	= "saves/{}.json".format(path)
+		self.__map	= []
+		self.loaded	= self.__loadJSON()
+
+	def __loadJSON(self): # Chargement depuis un fichier
+		try:
+			self.__loadBar(["Loading map ...", "Map loaded !"])
+			with open(self.__path) as outFile:
+				self.__map = json.load(outFile)
+
+			return(True)
+
+		except Exception:
+			return(False)
+
+	def __saveJSON(self): # Sauvegarde dans un fichier
+		try:
+			with open(self.__path, 'w') as inFile:
+				json.dump(self.__map, inFile)
+
+			return(True)
+
+		except Exception:
+			return(False)
 
 	def __loadBar(self, msg = ["", ""]): # Barre de charement
 		arr = ['\\', '|', '/', '-']
 
 		i = 0
 		while(i < 10):
-			print("[{}{}{}] {}".format(Colors.yellow, arr[i % len(arr)], Colors.end, msg[0]), end = "\r")
+			print(" [{}{}{}] {}".format(Colors.yellow, arr[i % len(arr)], Colors.end, msg[0]), end = "\r")
 			i += 1
 			sleep(.05)
 
-		print("[{}*{}] {}".format(Colors.green, Colors.end, msg[1]))
+		print(" [{}*{}] {}".format(Colors.green, Colors.end, msg[1]))
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
@@ -40,65 +62,43 @@ class Map:
 
 		return map
 
-	def __saveJSON(self): # Sauvegarde dans un fichier
-		try:
-			with open(self.__path, 'w') as inFile:
-				json.dump(self.map, inFile)
-
-			return(True)
-
-		except Exception:
-			return(False)
-
 	def __update(self): # Mise à jour de la map (autosave au passage)
-		xmap = self.__makeMap(len(self.map), len(self.map[0]))
+		xmap = self.__makeMap(len(self.__map), len(self.__map[0]))
 
-		for x in range(0, len(self.map)-1):
-			for y in range(0, len(self.map[x])-1):
+		for x in range(0, len(self.__map)-1):
+			for y in range(0, len(self.__map[x])-1):
 				active = 0
 
 				for i in range(-1, 2):
 					for j in range(-1, 2):
-						active += self.map[x+i][y+j] if((i != 0) or (j != 0)) else 0
+						active += self.__map[x+i][y+j] if((i != 0) or (j != 0)) else 0
 
-				xmap[x][y] = 1 if((active == 3) or (self.map[x][y] and (active == 2))) else 0
+				xmap[x][y] = 1 if((active == 3) or (self.__map[x][y] and (active == 2))) else 0
 
-		self.map = xmap
+		self.__map = xmap
 		self.__saveJSON()
-
-	def loadJSON(self): # Chargement depuis un fichier
-		try:
-			with open(self.__path) as outFile:
-				self.__loadBar(["Loading map ...", "Map loaded !"])
-				self.map = json.load(outFile)
-
-			return(True)
-
-		except Exception:
-			return(False)
 
 	def addCells(self, cells): # Ajout de cellule(s) active(s)
 		for cell in cells:
-			self.map[int(cell[0])-1][int(cell[1])-1] = 1
+			self.__map[int(cell[0])-1][int(cell[1])-1] = 1
 
-		self.__saveJSON()
-
-		return(True)
+		return(self.__saveJSON())
 
 	def display(self): # Affichage de la map
 		shell('clear' if(system() == "Linux") else 'cls')
 
-		for item in self.map:
+		for item in self.__map:
 			row = ""
 			for value in item:
-				row += "{}O{} ".format(Colors.green, Colors.end) if(value) else ". "
+				row += "{}O{}".format(Colors.green, Colors.end) if(value) else "{}.{}".format(Colors.cyan, Colors.end)
+				row += " "
 
 			print(row)
 
 		return(True)
 
 	def initMap(self, x, y): # Initialisation de la map dans l'objet
-		self.map = self.__makeMap(x, y)
+		self.__map = self.__makeMap(x, y)
 		self.__saveJSON()
 
 		return(True)
