@@ -16,19 +16,19 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 - [json](https://docs.python.org/3/library/json.html)
 - [os.system](https://docs.python.org/3/library/os.html#os.system)
-- [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv)
+- [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv), [sys.version_info](https://docs.python.org/3/library/sys.html#sys.version_info)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 
 ## Utilisations
 
-| Fonctionnalités                   | Commandes                                                                                |
-| --------------------------------- | ---------------------------------------------------------------------------------------- |
-| Exécuter le script                | `$ python main.py`                                                                       |
-| Créer une nouvelle map            | `$ python main.py -n <x> <y>`<br />`$ python main.py --new <x> <y>`                      |
-| Insérer une ou plusieurs cellules | `$ python main.py -a "[(x, y), ...]"`<br />`$ python main.py --add "[(x, y), ...]"`      |
-| Insérer une entité                | `$ python main.py -A <type> <x> <y>`<br />`$ python main.py --add-entity <type> <x> <y>` |
-| Afficher la map enregistrée       | `$ python main.py -d`<br />`$ python main.py --display`                                  |
+| Fonctionnalités                     | Commandes                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Exécuter le script                  | `$ python main.py`                                                                                           |
+| Créer une nouvelle map              | `$ python main.py -n <mapName> <x> <y>`<br />`$ python main.py --new <mapName> <x> <y>`                      |
+| Insérer une ou plusieurs cellule(s) | `$ python main.py -a <mapName> "[(x, y), ...]"`<br />`$ python main.py --add <mapName> "[(x, y), ...]"`      |
+| Insérer une entité                  | `$ python main.py -A <mapName> <type> <x> <y>`<br />`$ python main.py --add-entity <mapName> <type> <x> <y>` |
+| Afficher une map enregistrée        | `$ python main.py -d <mapName>`<br />`$ python main.py --display <mapName>`                                  |
 
 ## Sauvegarde
 
@@ -49,24 +49,24 @@ Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en sui
 
 ## Exemples d'utilisations
 
-![gamePlay-example](example.gif)
+![aperçu](preview.gif)
 
-On génère une nouvelle map avec `$ python main.py -n 50 50`
+On génère une nouvelle map avec `$ python main.py -n data 50 50`
 
 On ajoute les cellules active de sorte à former une entité:
 
-- **Bloc**: `$ python main.py -a "[(2,1), (2,2), (3,1), (3,2)]"`
-- **Grenouille**: `$ python main.py -a "[(2,1), (3,1), (4,2), (3,4), (2,4), (1,3)]"`
-- **Planeur**: `$ python main.py -a "[(1,1), (2,2), (2,3), (3,1), (3,2)]"`
+- **Bloc**: `$ python main.py -a data "[(2,1), (2,2), (3,1), (3,2)]"`
+- **Grenouille**: `$ python main.py -a data "[(2,1), (3,1), (4,2), (3,4), (2,4), (1,3)]"`
+- **Planeur**: `$ python main.py -a data "[(1,1), (2,2), (2,3), (3,1), (3,2)]"`
 
-Et on lance le jeu avec `$ python main.py`
+Et on lance le jeu avec `$ python main.py` tout en entrant le nom de la map que l'on souhaite charger
 
 ### Remarque
 
-- Vous pouvez checker votre configuration avec `$ python main.py -d` pour afficher la map avec vos cellules actives
+- Vous pouvez checker votre configuration avec `$ python main.py -d data` pour afficher la map avec vos cellules actives
 - Depuis la version 2.0, vous pouvez maintenant enregistrer une entité complète dans **[entity.json](entity.json)** et l'ajouter sur la map comme ceci:
-  - **Départ de floraison**: `$ python main.py -A flowering 25 25`
-  - **Le clown**: `$ python main.py -A clown 25 25`
+  - **Départ de floraison**: `$ python main.py -A data flowering 25 25`
+  - **Le clown**: `$ python main.py -A data clown 25 25`
 
 ## Licence
 
