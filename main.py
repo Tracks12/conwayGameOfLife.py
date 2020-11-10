@@ -13,23 +13,34 @@ if(version_info.major < 3): # Vérification de l'éxecution du script avec Pytho
 
 from core.map import Map
 
-def arg(map): # Fonction d'entrée des arguments
+def arg(): # Fonction d'entrée des arguments
+	def mapExist():
+		try:
+			map = Map(str(argv[2]))
+
+			return(map)
+
+		except Exception:
+			print("{}Aucun nom de map n'a été entrer".format(Icons.warn))
+
+			return(False)
+
 	args = {
 		"prefix": (
-			(("-a", "--add"), "[(x, y), ...]"),
-			(("-A", "--add-entity"), "<type> <x> <y>"),
-			(("-d", "--display"), ""),
-			(("-n", "--new"), "<x> <y>"),
+			(("-a", "--add"), "<mapName> \"[(x, y), ...]\""),
+			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
+			(("-d", "--display"), "<mapName>"),
+			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
 			"\tInsérer une ou plusieurs cellules",
 			"Insérer une entité",
-			"\t\t\tAfficher la map enregistrée",
+			"\t\tAfficher la map enregistrée",
 			"\t\tCréer une nouvelle map\n",
-			"\t\t\tAffichage du menu d'aide",
-			"\t\t\tAffichage de la version du programme\n"
+			"\t\t\t\tAffichage du menu d'aide",
+			"\t\t\t\tAffichage de la version du programme\n"
 		)
 	}
 
@@ -45,12 +56,16 @@ def arg(map): # Fonction d'entrée des arguments
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
+		map = mapExist()
+		if(not map):
+			return(False)
+
 		if(map.loaded):
 			try:
-				map.addCells(eval(argv[2]))
+				map.addCells(eval(argv[3]))
 
 			except Exception:
-				print("{}Coordonnées manquantes".format(Icons.warn))
+				print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
 
 				return(False)
 
@@ -58,11 +73,17 @@ def arg(map): # Fonction d'entrée des arguments
 			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
+			return(False)
+
 	elif(argv[1] in args["prefix"][1][0]):
+		map = mapExist()
+		if(not map):
+			return(False)
+
 		if(map.loaded):
 			try:
-				x = int(argv[3])
-				y = int(argv[4])
+				x = int(argv[4])
+				y = int(argv[5])
 
 			except Exception:
 				print("{}Les coordonnées de position doivent être des entiers".format(Icons.warn))
@@ -83,15 +104,21 @@ def arg(map): # Fonction d'entrée des arguments
 
 				return(False)
 
-			if(argv[2] in entity):
-				map.addCells(entity[argv[2]])
+			if(argv[3] in entity):
+				map.addCells(entity[argv[3]])
 				map.display()
 
 		else:
 			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
+			return(False)
+
 	elif(argv[1] in args["prefix"][2][0]):
+		map = mapExist()
+		if(not map):
+			return(False)
+
 		if(map.loaded):
 			map.display()
 
@@ -99,17 +126,27 @@ def arg(map): # Fonction d'entrée des arguments
 			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
 			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
 
+			return(False)
+
 	elif(argv[1] in args["prefix"][3][0]):
+		map = mapExist()
+		if(not map):
+			return(False)
+
 		try:
-			map.initMap(int(argv[2]), int(argv[3]))
+			map.initMap(int(argv[3]), int(argv[4]))
 			map.display()
 
 		except Exception:
 			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
+			return(False)
+
 	return(True)
 
-def main(map): # Fonction principale de l'execution du programme
+def main(): # Fonction principale de l'execution du programme
+	map = Map(str(input("Enter map name to load: ")))
+
 	if(not map.loaded):
 		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
 		print("{}Création d'une nouvelle map ...".format(Icons.info))
@@ -134,5 +171,4 @@ def main(map): # Fonction principale de l'execution du programme
 	return(True)
 
 if __name__ == "__main__":
-	map = Map()
-	arg(map) if(len(argv) > 1) else main(map)
+	arg() if(len(argv) > 1) else main()

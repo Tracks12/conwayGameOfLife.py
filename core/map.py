@@ -14,15 +14,16 @@ from core.colors import Colors
 
 class Map:
 	# Fichier de chargement par défaut: "data.json"
-	def __init__(self, path = "data"):
-		self.__path	= "saves/{}.json".format(path)
-		self.__map	= []
-		self.loaded	= self.__loadJSON()
+	def __init__(self, mapName = "data"):
+		self.__path		= "saves/{}.json".format(mapName)
+		self.__map		= []
+		self.loaded		= self.__loadJSON()
+		self.mapName	= mapName
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
-			self.__loadBar(["Loading map ...", "Map loaded !"])
 			with open(self.__path) as outFile:
+				self.__loadBar(["Loading map ...", "Map loaded !"])
 				self.__map = json.load(outFile)
 
 			return(True)
