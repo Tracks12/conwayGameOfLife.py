@@ -38,6 +38,7 @@ def arg(): # Fonction d'entrée des arguments
 			(("-d", "--display"), "<mapName>"),
 			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-r", "--reset"), "<mapName>"),
+			(("-s", "--start"), "<mapName>"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
@@ -46,7 +47,8 @@ def arg(): # Fonction d'entrée des arguments
 			"Insérer une entité",
 			"\t\tAfficher la map enregistrée",
 			"\t\tCréer une nouvelle map",
-			"\t\t\tRéinitialise une map\n",
+			"\t\t\tRéinitialise une map",
+			"\t\t\tJouer une map\n",
 			"\t\t\t\tAffichage du menu d'aide",
 			"\t\t\t\tAffichage de la version du programme\n"
 		)
@@ -148,6 +150,17 @@ def arg(): # Fonction d'entrée des arguments
 		if(map.loaded):
 			map.reset()
 			map.display()
+
+		else:
+			return(errMsg())
+
+	elif(argv[1] in args["prefix"][5][0]):
+		map = mapEntry()
+		if(not map):
+			return(False)
+
+		if(map.loaded):
+			map.start()
 
 		else:
 			return(errMsg())
