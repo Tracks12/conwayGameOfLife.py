@@ -11,6 +11,7 @@ from platform import system
 from time import sleep
 
 from core.colors import Colors
+from core.loader import loadBar
 
 class Map:
 	# Fichier de chargement par défaut: "data.json"
@@ -22,8 +23,8 @@ class Map:
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
-			with open(self.__path) as outFile:
-				self.__loadBar(["Loading map ...", "Map loaded !"])
+			with open(self.__path, 'r') as outFile:
+				loadBar(["Loading map ...", "Map loaded !"])
 				self.__map = json.load(outFile)
 
 			return(True)
@@ -40,17 +41,6 @@ class Map:
 
 		except Exception:
 			return(False)
-
-	def __loadBar(self, msg = ["", ""]): # Barre de charement
-		arr = ['\\', '|', '/', '-']
-
-		i = 0
-		while(i < 10):
-			print(" [{}{}{}] {}".format(Colors.yellow, arr[i % len(arr)], Colors.end, msg[0]), end = "\r")
-			i += 1
-			sleep(.05)
-
-		print(" [{}*{}] {}".format(Colors.green, Colors.end, msg[1]))
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies

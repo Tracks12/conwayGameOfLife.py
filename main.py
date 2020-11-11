@@ -1,7 +1,6 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
 from sys import argv, version_info
 
 # Importation des dépendances internes
@@ -11,10 +10,11 @@ if(version_info.major < 3): # Vérification de l'éxecution du script avec Pytho
 	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
 	exit()
 
+from core.entity import Entity
 from core.map import Map
 
 def arg(): # Fonction d'entrée des arguments
-	def mapExist():
+	def mapEntry():
 		try:
 			map = Map(str(argv[2]))
 
@@ -56,7 +56,7 @@ def arg(): # Fonction d'entrée des arguments
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][0][0]):
-		map = mapExist()
+		map = mapEntry()
 		if(not map):
 			return(False)
 
@@ -76,7 +76,8 @@ def arg(): # Fonction d'entrée des arguments
 			return(False)
 
 	elif(argv[1] in args["prefix"][1][0]):
-		map = mapExist()
+		map			= mapEntry()
+		entities	= Entity()
 		if(not map):
 			return(False)
 
@@ -90,23 +91,18 @@ def arg(): # Fonction d'entrée des arguments
 
 				return(False)
 
-			try:
-				with open("entity.json", 'r') as outFile:
-					entity = json.load(outFile)
+			if(entities.loaded):
+				if(argv[3] in entities.getEntitiesName()):
+					map.addCells(entities.get(argv[3], (x, y)))
+					map.display()
 
-					for item in entity:
-						entity[item].replace("x", str(x))
-						entity[item].replace("y", str(y))
-						entity[item] = eval(entity[item])
+				else:
+					print("{}Entitée non reconnue".format(Icons.warn))
 
-			except Exception:
+			else:
 				print("{}Le fichier d'entités est introuvables".format(Icons.warn))
 
 				return(False)
-
-			if(argv[3] in entity):
-				map.addCells(entity[argv[3]])
-				map.display()
 
 		else:
 			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
@@ -115,7 +111,7 @@ def arg(): # Fonction d'entrée des arguments
 			return(False)
 
 	elif(argv[1] in args["prefix"][2][0]):
-		map = mapExist()
+		map = mapEntry()
 		if(not map):
 			return(False)
 
@@ -129,7 +125,7 @@ def arg(): # Fonction d'entrée des arguments
 			return(False)
 
 	elif(argv[1] in args["prefix"][3][0]):
-		map = mapExist()
+		map = mapEntry()
 		if(not map):
 			return(False)
 
