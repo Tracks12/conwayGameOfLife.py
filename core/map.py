@@ -91,7 +91,7 @@ class Map:
 			stats = (
 				"Name       : {}".format(self.mapName),
 				"Dimensions : {}x{}".format(self.dimensions[0], self.dimensions[1]),
-				"Actives    : {}".format(active)
+				"Actives    : {}{}{}".format(Colors.green if(active < ((len(self.__map)*len(self.__map[0]))/3)) else Colors.red, active, Colors.end)
 			)
 
 		for item in self.__map:
