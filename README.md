@@ -32,7 +32,7 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **JSON** portant le nom de la map (_exemple: **[world.json](world.json)**_)
+Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **JSON** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.json](saves/world.json)**_)
 
 ### Les entités
 
