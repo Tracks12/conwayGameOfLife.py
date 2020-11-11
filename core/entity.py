@@ -10,7 +10,7 @@ from core.loader import loadBar
 
 class Entity:
 	def __init__(self):
-		self.__path		= "entity.json"
+		self.__path		= str("entity.json")
 		self.__entities	= {}
 		self.loaded		= bool(self.__loadJSON())
 

@@ -14,18 +14,20 @@ from core.colors import Colors
 from core.loader import loadBar
 
 class Map:
-	# Fichier de chargement par défaut: "data.json"
-	def __init__(self, mapName = "data"):
-		self.__path		= "saves/{}.json".format(mapName)
+	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
+		self.__path		= str("saves/{}.json".format(str(mapName)))
 		self.__map		= []
-		self.loaded		= self.__loadJSON()
-		self.mapName	= mapName
+		self.dimensions	= (0, 0)
+		self.mapName	= str(mapName)
+		self.loaded		= bool(self.__loadJSON())
+		self.stat		= bool(True)
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
 			with open(self.__path, 'r') as outFile:
 				loadBar(["Loading map ...", "Map loaded !"])
-				self.__map = json.load(outFile)
+				self.__map		= list(json.load(outFile))
+				self.dimensions	= (len(self.__map), len(self.__map[0]))
 
 			return(True)
 
@@ -44,17 +46,17 @@ class Map:
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
-	def __makeMap(self, x = 20, y = 20):
+	def __makeMap(self, dims = (20, 20)):
 		map = []
-		for i in range(0, x):
+		for i in range(0, int(dims[0])):
 			map.append([])
-			for j in range(0, y):
+			for j in range(0, int(dims[1])):
 				map[i].append(0)
 
-		return map
+		return(map)
 
 	def __update(self): # Mise à jour de la map (autosave au passage)
-		xmap = self.__makeMap(len(self.__map), len(self.__map[0]))
+		xmap = self.__makeMap((len(self.__map), len(self.__map[0])))
 
 		for x in range(0, len(self.__map)-1):
 			for y in range(0, len(self.__map[x])-1):
@@ -75,8 +77,22 @@ class Map:
 
 		return(self.__saveJSON())
 
-	def display(self): # Affichage de la map
+	def display(self): # Affichage de la map avec/sans les statistiques
 		shell('clear' if(system() == "Linux") else 'cls')
+
+		if(bool(self.stat)): # Initialisation des statistiques
+			i = 0
+			active = 0
+
+			for cells in self.__map:
+				for cell in cells:
+					active += cell
+
+			stats = (
+				"Name       : {}".format(self.mapName),
+				"Dimensions : {}".format(self.dimensions),
+				"Actives    : {}".format(active)
+			)
 
 		for item in self.__map:
 			row = ""
@@ -84,15 +100,26 @@ class Map:
 				row += "{}O{}".format(Colors.green, Colors.end) if(value) else "{}.{}".format(Colors.cyan, Colors.end)
 				row += " "
 
+			if(bool(self.stat) and (i < len(stats))): # Mise à jours des statistiques
+				row += " {}".format(stats[i])
+				i += 1
+
 			print(row)
 
 		return(True)
 
 	def initMap(self, x, y): # Initialisation de la map dans l'objet
-		self.__map = self.__makeMap(x, y)
-		self.__saveJSON()
+		self.__map		= self.__makeMap((int(x), int(y)))
+		self.dimensions	= (len(self.__map), len(self.__map[0]))
 
-		return(True)
+		return(self.__saveJSON())
+
+	def reset(self): # Reset complet de toute la map
+		for i in range(0, len(self.__map)):
+			for j in range(0, len(self.__map[0])):
+				self.__map[i][j] = 0
+
+		self.__saveJSON()
 
 	def start(self): # Lancement du jeu
 		while(True):

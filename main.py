@@ -70,8 +70,8 @@ def arg(): # Fonction d'entrée des arguments
 				return(False)
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
 
 			return(False)
 
@@ -105,8 +105,8 @@ def arg(): # Fonction d'entrée des arguments
 				return(False)
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
 
 			return(False)
 
@@ -119,8 +119,8 @@ def arg(): # Fonction d'entrée des arguments
 			map.display()
 
 		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
+			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
 
 			return(False)
 
@@ -141,10 +141,10 @@ def arg(): # Fonction d'entrée des arguments
 	return(True)
 
 def main(): # Fonction principale de l'execution du programme
-	map = Map(str(input("Enter map name to load: ")))
+	map = Map(str(input("Entrer un nom de map à charger: ")))
 
 	if(not map.loaded):
-		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
 		print("{}Création d'une nouvelle map ...".format(Icons.info))
 
 		while("size" not in locals()):
@@ -160,7 +160,7 @@ def main(): # Fonction principale de l'execution du programme
 			except Exception as e:
 				print("{}La valeur doit être un entier et supérieur à 5".format(Icons.warn))
 
-		map.initMap(size["x"], size["y"])
+		map.initMap(int(size["x"]), int(size["y"]))
 
 	map.start()
 
