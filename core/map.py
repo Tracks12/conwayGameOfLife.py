@@ -90,7 +90,7 @@ class Map:
 
 			stats = (
 				"Name       : {}".format(self.mapName),
-				"Dimensions : {}".format(self.dimensions),
+				"Dimensions : {}x{}".format(self.dimensions[0], self.dimensions[1]),
 				"Actives    : {}".format(active)
 			)
 
