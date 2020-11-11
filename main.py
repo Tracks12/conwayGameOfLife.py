@@ -25,12 +25,19 @@ def arg(): # Fonction d'entrée des arguments
 
 			return(False)
 
+	def errMsg():
+		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
+		print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
+
+		return(False)
+
 	args = {
 		"prefix": (
 			(("-a", "--add"), "<mapName> \"[(x, y), ...]\""),
 			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
 			(("-d", "--display"), "<mapName>"),
 			(("-n", "--new"), "<mapName> <x> <y>"),
+			(("-r", "--reset"), "<mapName>"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
@@ -38,7 +45,8 @@ def arg(): # Fonction d'entrée des arguments
 			"\tInsérer une ou plusieurs cellules",
 			"Insérer une entité",
 			"\t\tAfficher la map enregistrée",
-			"\t\tCréer une nouvelle map\n",
+			"\t\tCréer une nouvelle map",
+			"\t\t\tRéinitialise une map\n",
 			"\t\t\t\tAffichage du menu d'aide",
 			"\t\t\t\tAffichage de la version du programme\n"
 		)
@@ -70,10 +78,7 @@ def arg(): # Fonction d'entrée des arguments
 				return(False)
 
 		else:
-			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
-
-			return(False)
+			return(errMsg())
 
 	elif(argv[1] in args["prefix"][1][0]):
 		map			= mapEntry()
@@ -105,10 +110,7 @@ def arg(): # Fonction d'entrée des arguments
 				return(False)
 
 		else:
-			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
-
-			return(False)
+			return(errMsg())
 
 	elif(argv[1] in args["prefix"][2][0]):
 		map = mapEntry()
@@ -137,6 +139,18 @@ def arg(): # Fonction d'entrée des arguments
 			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
 			return(False)
+
+	elif(argv[1] in args["prefix"][4][0]):
+		map = mapEntry()
+		if(not map):
+			return(False)
+
+		if(map.loaded):
+			map.reset()
+			map.display()
+
+		else:
+			return(errMsg())
 
 	return(True)
 
