@@ -73,6 +73,7 @@ def arg(): # Fonction d'entrée des arguments
 		if(map.loaded):
 			try:
 				map.addCells(eval(argv[3]))
+				map.display()
 
 			except Exception:
 				print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
@@ -94,7 +95,7 @@ def arg(): # Fonction d'entrée des arguments
 				y = int(argv[5])
 
 			except Exception:
-				print("{}Les coordonnées de position doivent être des entiers".format(Icons.warn))
+				print("{}Les coordonnées de position sont incorrectes".format(Icons.warn))
 
 				return(False)
 
@@ -123,10 +124,7 @@ def arg(): # Fonction d'entrée des arguments
 			map.display()
 
 		else:
-			print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
-
-			return(False)
+			return(errMsg())
 
 	elif(argv[1] in args["prefix"][3][0]):
 		map = mapEntry()
