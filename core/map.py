@@ -16,8 +16,8 @@ from core.loader import loadBar
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
 		self.__path		= str("saves/{}.json".format(str(mapName)))
-		self.__map		= []
-		self.dimensions	= (0, 0)
+		self.__map		= list([])
+		self.dimensions	= tuple((0, 0))
 		self.mapName	= str(mapName)
 		self.loaded		= bool(self.__loadJSON())
 		self.stat		= bool(True)

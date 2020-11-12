@@ -11,7 +11,7 @@ from core.loader import loadBar
 class Entity:
 	def __init__(self):
 		self.__path		= str("entity.json")
-		self.__entities	= {}
+		self.__entities	= dict({})
 		self.loaded		= bool(self.__loadJSON())
 
 	def __loadJSON(self): # Chargement des entités depuis un fichier
@@ -44,4 +44,4 @@ class Entity:
 		return(names)
 
 	def get(self, name, coord = (5, 5)): # Récupération d'une
-		return self.__build(coord)[name]
+		return(self.__build(coord)[name])
