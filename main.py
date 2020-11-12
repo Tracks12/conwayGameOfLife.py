@@ -65,103 +65,103 @@ def arg(): # Fonction d'entrée des arguments
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
-	elif(argv[1] in args["prefix"][0][0]):
+	if(
+		not (argv[1] in args["prefix"][-2][0])
+		and not (argv[1] in args["prefix"][-1][0])
+	):
 		map = mapEntry()
-		if(not map):
-			return(False)
 
-		if(map.loaded):
+		if(argv[1] in args["prefix"][0][0]):
+			if(not map):
+				return(False)
+
+			if(map.loaded):
+				try:
+					map.addCells(eval(argv[3]))
+					map.display()
+
+				except Exception:
+					print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
+
+					return(False)
+
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][1][0]):
+			entities = Entity()
+			if(not map):
+				return(False)
+
+			if(map.loaded):
+				try:
+					x = int(argv[4])
+					y = int(argv[5])
+
+				except Exception:
+					print("{}Les coordonnées de position sont incorrectes".format(Icons.warn))
+
+					return(False)
+
+				if(entities.loaded):
+					if(argv[3] in entities.getEntitiesName()):
+						map.addCells(entities.get(argv[3], (x, y)))
+						map.display()
+
+					else:
+						print("{}Entitée non reconnue".format(Icons.warn))
+
+				else:
+					print("{}Le fichier d'entités est introuvables".format(Icons.warn))
+
+					return(False)
+
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][2][0]):
+			if(not map):
+				return(False)
+
+			if(map.loaded):
+				map.display()
+
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][3][0]):
+			if(not map):
+				return(False)
+
 			try:
-				map.addCells(eval(argv[3]))
+				map.initMap(int(argv[3]), int(argv[4]))
 				map.display()
 
 			except Exception:
-				print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
+				print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
 				return(False)
 
-		else:
-			return(errMsg())
-
-	elif(argv[1] in args["prefix"][1][0]):
-		map			= mapEntry()
-		entities	= Entity()
-		if(not map):
-			return(False)
-
-		if(map.loaded):
-			try:
-				x = int(argv[4])
-				y = int(argv[5])
-
-			except Exception:
-				print("{}Les coordonnées de position sont incorrectes".format(Icons.warn))
-
+		elif(argv[1] in args["prefix"][4][0]):
+			if(not map):
 				return(False)
 
-			if(entities.loaded):
-				if(argv[3] in entities.getEntitiesName()):
-					map.addCells(entities.get(argv[3], (x, y)))
-					map.display()
-
-				else:
-					print("{}Entitée non reconnue".format(Icons.warn))
+			if(map.loaded):
+				map.reset()
+				map.display()
 
 			else:
-				print("{}Le fichier d'entités est introuvables".format(Icons.warn))
+				return(errMsg())
 
+		elif(argv[1] in args["prefix"][5][0]):
+			if(not map):
 				return(False)
 
-		else:
-			return(errMsg())
+			if(map.loaded):
+				map.start()
 
-	elif(argv[1] in args["prefix"][2][0]):
-		map = mapEntry()
-		if(not map):
-			return(False)
-
-		if(map.loaded):
-			map.display()
-
-		else:
-			return(errMsg())
-
-	elif(argv[1] in args["prefix"][3][0]):
-		map = mapEntry()
-		if(not map):
-			return(False)
-
-		try:
-			map.initMap(int(argv[3]), int(argv[4]))
-			map.display()
-
-		except Exception:
-			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
-
-			return(False)
-
-	elif(argv[1] in args["prefix"][4][0]):
-		map = mapEntry()
-		if(not map):
-			return(False)
-
-		if(map.loaded):
-			map.reset()
-			map.display()
-
-		else:
-			return(errMsg())
-
-	elif(argv[1] in args["prefix"][5][0]):
-		map = mapEntry()
-		if(not map):
-			return(False)
-
-		if(map.loaded):
-			map.start()
-
-		else:
-			return(errMsg())
+			else:
+				return(errMsg())
 
 	return(True)
 
