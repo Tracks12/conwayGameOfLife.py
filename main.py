@@ -47,7 +47,7 @@ def arg(): # Fonction d'entrée des arguments
 			"Insérer une entité",
 			"\t\tAfficher la map enregistrée",
 			"\t\tCréer une nouvelle map",
-			"\t\t\tRéinitialise une map",
+			"\t\t\tRéinitialiser une map",
 			"\t\t\tJouer une map\n",
 			"\t\t\t\tAffichage du menu d'aide",
 			"\t\t\t\tAffichage de la version du programme\n"
