@@ -90,11 +90,12 @@ def arg(): # Fonction d'entrée des arguments
 				return(errMsg())
 
 		elif(argv[1] in args["prefix"][1][0]):
-			entities = Entity()
 			if(not map):
 				return(False)
 
 			if(map.loaded):
+				entities = Entity()
+
 				try:
 					x = int(argv[4])
 					y = int(argv[5])

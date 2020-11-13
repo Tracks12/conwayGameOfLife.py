@@ -5,30 +5,30 @@
 # ce module contient les fonctionnalités de sauvegarde et de chargement de la map
 # ainsi que la mise à jour de celle-ci
 
-import json
+from json import dump
 from os import system as shell
 from platform import system
 from time import sleep
 
 from core.colors import Colors
-from core.loader import loadBar
+from core.loader import JSONloader
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
 		self.__path		= str(f"saves/{str(mapName)}.json")
+		self.__dims		= tuple((0, 0))
+		self.__cells	= int(self.__dims[0]*self.__dims[1])
 		self.__map		= list([])
-		self.dimensions	= tuple((0, 0))
 		self.mapName	= str(mapName)
 		self.loaded		= bool(self.__loadJSON())
 		self.stat		= bool(True)
-		self.cells		= int(self.dimensions[1]*self.dimensions[0])
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
 			with open(self.__path, "r") as outFile:
-				loadBar(["Loading map ...", "Map loaded !"])
-				self.__map		= list(json.load(outFile))
-				self.dimensions	= (len(self.__map), len(self.__map[0]))
+				self.__map		= list(JSONloader(outFile, ["Loading map ...", "Map loaded !", "Map loading failed !"]))
+				self.__dims		= tuple((len(self.__map), len(self.__map[0])))
+				self.__cells	= int(self.__dims[1]*self.__dims[0])
 
 			return(True)
 
@@ -38,7 +38,7 @@ class Map:
 	def __saveJSON(self): # Sauvegarde dans un fichier
 		try:
 			with open(self.__path, "w") as inFile:
-				json.dump(self.__map, inFile)
+				dump(self.__map, inFile)
 
 			return(True)
 
@@ -57,10 +57,10 @@ class Map:
 		return(map)
 
 	def __update(self): # Mise à jour de la map (autosave au passage)
-		xmap = self.__makeMap((len(self.__map), len(self.__map[0])))
+		xmap = self.__makeMap(self.__dims)
 
-		for x in range(0, len(self.__map)-1):
-			for y in range(0, len(self.__map[x])-1):
+		for x in range(0, self.__dims[0]-1):
+			for y in range(0, self.__dims[1]-1):
 				active = 0
 
 				for i in range(-1, 2):
@@ -90,8 +90,8 @@ class Map:
 
 			stats = (
 				f"Name       : {self.mapName}",
-				f"Dimensions : {self.dimensions[0]}x{self.dimensions[1]}",
-				f"Actives    : {Colors.green if(active < int(self.cells/2)) else Colors.red}{active}{Colors.end}"
+				f"Dimensions : {self.__dims[0]}x{self.__dims[1]}",
+				f"Actives    : {Colors.green if(active < int(self.__cells/2)) else Colors.red}{active}{Colors.end}"
 			)
 
 		for i, line in enumerate(self.__map):
@@ -108,14 +108,15 @@ class Map:
 		return(True)
 
 	def initMap(self, x, y): # Initialisation de la map dans l'objet
-		self.__map		= self.__makeMap((int(x), int(y)))
-		self.dimensions	= (len(self.__map), len(self.__map[0]))
+		self.__map		= list(self.__makeMap((int(x), int(y))))
+		self.__dims		= tuple((int(x), int(y)))
+		self.__cells	= int(self.__dims[0]*self.__dims[1])
 
 		return(self.__saveJSON())
 
 	def reset(self): # Reset complet de toute la map
-		for i in range(0, len(self.__map)):
-			for j in range(0, len(self.__map[0])):
+		for i in range(0, self.__dims[0]):
+			for j in range(0, self.__dims[1]):
 				self.__map[i][j] = 0
 
 		self.__saveJSON()
