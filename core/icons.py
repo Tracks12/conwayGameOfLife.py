@@ -6,6 +6,6 @@
 from core.colors import Colors
 
 class Icons:
-	warn = " {}{}[!]{} - ".format(Colors.bold, Colors.red, Colors.end)
-	info = " {}{}(i){} - ".format(Colors.bold, Colors.blue, Colors.end)
-	tips = " {}{}(?){} - ".format(Colors.bold, Colors.green, Colors.end)
+	warn = f" {Colors.bold}{Colors.red}[!]{Colors.end} - "
+	info = f" {Colors.bold}{Colors.blue}(i){Colors.end} - "
+	tips = f" {Colors.bold}{Colors.green}(?){Colors.end} - "

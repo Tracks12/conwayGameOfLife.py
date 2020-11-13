@@ -15,7 +15,7 @@ from core.loader import loadBar
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
-		self.__path		= str("saves/{}.json".format(str(mapName)))
+		self.__path		= str(f"saves/{str(mapName)}.json")
 		self.__map		= list([])
 		self.dimensions	= tuple((0, 0))
 		self.mapName	= str(mapName)
@@ -25,7 +25,7 @@ class Map:
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
-			with open(self.__path, 'r') as outFile:
+			with open(self.__path, "r") as outFile:
 				loadBar(["Loading map ...", "Map loaded !"])
 				self.__map		= list(json.load(outFile))
 				self.dimensions	= (len(self.__map), len(self.__map[0]))
@@ -37,7 +37,7 @@ class Map:
 
 	def __saveJSON(self): # Sauvegarde dans un fichier
 		try:
-			with open(self.__path, 'w') as inFile:
+			with open(self.__path, "w") as inFile:
 				json.dump(self.__map, inFile)
 
 			return(True)
@@ -89,19 +89,19 @@ class Map:
 					active += cell
 
 			stats = (
-				"Name       : {}".format(self.mapName),
-				"Dimensions : {}x{}".format(self.dimensions[0], self.dimensions[1]),
-				"Actives    : {}{}{}".format(Colors.green if(active < int(self.cells/2)) else Colors.red, active, Colors.end)
+				f"Name       : {self.mapName}",
+				f"Dimensions : {self.dimensions[0]}x{self.dimensions[1]}",
+				f"Actives    : {Colors.green if(active < int(self.cells/2)) else Colors.red}{active}{Colors.end}"
 			)
 
 		for i, line in enumerate(self.__map):
 			row = ""
 			for value in line:
-				row += "{}O{}".format(Colors.green, Colors.end) if(value) else "{}.{}".format(Colors.cyan, Colors.end)
-				row += " "
+				row += f"{Colors.green}O" if(value) else f"{Colors.cyan}."
+				row += f"{Colors.end} "
 
 			if(bool(self.stat) and (i < len(stats))): # Mise à jours des statistiques
-				row += " {}".format(stats[i])
+				row += f" {stats[i]}"
 
 			print(row)
 

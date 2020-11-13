@@ -11,7 +11,7 @@ def loadBar(msg = ["", ""]): # Barre de charement
 	arr = ['\\', '|', '/', '-']
 
 	for i in range(0, 10):
-		print(" [{}{}{}] {}".format(Colors.yellow, arr[i % len(arr)], Colors.end, msg[0]), end = "\r")
+		print(f" [{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg[0]}", end = "\r")
 		sleep(.05)
 
-	print(" [{}*{}] {}".format(Colors.green, Colors.end, msg[1]))
+	print(f" [{Colors.green}*{Colors.end}] {msg[1]}")

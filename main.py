@@ -4,10 +4,11 @@
 from sys import argv, version_info
 
 # Importation des dépendances internes
+from core.colors import Colors
 from core.icons import Icons
 
 if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
-	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
+	print(f"{Icons.warn}Le programme doit être lancer avec Python 3")
 	exit()
 
 from core.entity import Entity
@@ -21,13 +22,13 @@ def arg(): # Fonction d'entrée des arguments
 			return(map)
 
 		except Exception:
-			print("{}Aucun nom de map n'a été entrer".format(Icons.warn))
+			print(f"{Icons.warn}Aucun nom de map n'a été entrer")
 
 			return(False)
 
 	def errMsg():
-		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
-		print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
+		print(f"{Icons.warn}Il y a pas de map sauvegardée portant ce nom")
+		print(f'{Icons.info}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"')
 
 		return(False)
 
@@ -60,7 +61,7 @@ def arg(): # Fonction d'entrée des arguments
 		print(" Arguments:")
 
 		for i in range(0, len(args["prefix"])):
-			print(" {}, {} {}\t{}".format(args["prefix"][i][0][0], args["prefix"][i][0][1], args["prefix"][i][1], args["descriptions"][i]))
+			print(f' {args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}\t{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
@@ -81,7 +82,7 @@ def arg(): # Fonction d'entrée des arguments
 					map.display()
 
 				except Exception:
-					print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
+					print(f"{Icons.warn}Coordonnées manquantes ou incorrectes")
 
 					return(False)
 
@@ -99,7 +100,7 @@ def arg(): # Fonction d'entrée des arguments
 					y = int(argv[5])
 
 				except Exception:
-					print("{}Les coordonnées de position sont incorrectes".format(Icons.warn))
+					print(f"{Icons.warn}Les coordonnées de position sont incorrectes")
 
 					return(False)
 
@@ -109,10 +110,10 @@ def arg(): # Fonction d'entrée des arguments
 						map.display()
 
 					else:
-						print("{}Entitée non reconnue".format(Icons.warn))
+						print(f"{Icons.warn}Entitée non reconnue")
 
 				else:
-					print("{}Le fichier d'entités est introuvables".format(Icons.warn))
+					print(f"{Icons.warn}Le fichier d'entités est introuvables")
 
 					return(False)
 
@@ -138,7 +139,7 @@ def arg(): # Fonction d'entrée des arguments
 				map.display()
 
 			except Exception:
-				print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
+				print(f"{Icons.warn}Spécifier les dimension <x> et <y>")
 
 				return(False)
 
@@ -166,11 +167,12 @@ def arg(): # Fonction d'entrée des arguments
 	return(True)
 
 def main(): # Fonction principale de l'execution du programme
-	map = Map(str(input("Entrer un nom de map à charger: ")))
+	map = Map(str(input(f"Entrer un nom de map à charger: {Colors.green}")))
+	print(Colors.end)
 
 	if(not map.loaded):
-		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
-		print("{}Création d'une nouvelle map ...".format(Icons.info))
+		print(f"{Icons.warn}Il y a pas de map sauvegardée portant ce nom")
+		print(f"{Icons.info}Création d'une nouvelle map ...")
 
 		while("size" not in locals()):
 			try:
@@ -181,10 +183,10 @@ def main(): # Fonction principale de l'execution du programme
 
 				if((size["x"] < 5) or (size["y"] < 5)):
 					del size
-					print("{}Les valeurs doivent être supérieur à 5".format(Icons.warn))
+					print(f"{Icons.warn}Les valeurs doivent être supérieur à 5")
 
 			except Exception as e:
-				print("{}Les valeurs doivent être des entiers supérieur à 5".format(Icons.warn))
+				print(f"{Icons.warn}Les valeurs doivent être des entiers supérieur à 5")
 
 		map.initMap((int(size["x"]), int(size["y"])))
 
