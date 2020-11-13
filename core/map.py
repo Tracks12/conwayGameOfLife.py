@@ -21,6 +21,7 @@ class Map:
 		self.mapName	= str(mapName)
 		self.loaded		= bool(self.__loadJSON())
 		self.stat		= bool(True)
+		self.cells		= int(self.dimensions[1]*self.dimensions[0])
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
@@ -81,7 +82,6 @@ class Map:
 		shell('clear' if(system() == "Linux") else 'cls')
 
 		if(bool(self.stat)): # Initialisation des statistiques
-			i = 0
 			active = 0
 
 			for cells in self.__map:
@@ -91,18 +91,17 @@ class Map:
 			stats = (
 				"Name       : {}".format(self.mapName),
 				"Dimensions : {}x{}".format(self.dimensions[0], self.dimensions[1]),
-				"Actives    : {}{}{}".format(Colors.green if(active < ((len(self.__map)*len(self.__map[0]))/3)) else Colors.red, active, Colors.end)
+				"Actives    : {}{}{}".format(Colors.green if(active < int(self.cells/2)) else Colors.red, active, Colors.end)
 			)
 
-		for item in self.__map:
+		for i, line in enumerate(self.__map):
 			row = ""
-			for value in item:
+			for value in line:
 				row += "{}O{}".format(Colors.green, Colors.end) if(value) else "{}.{}".format(Colors.cyan, Colors.end)
 				row += " "
 
 			if(bool(self.stat) and (i < len(stats))): # Mise à jours des statistiques
 				row += " {}".format(stats[i])
-				i += 1
 
 			print(row)
 
