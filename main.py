@@ -181,11 +181,12 @@ def main(): # Fonction principale de l'execution du programme
 
 				if((size["x"] < 5) or (size["y"] < 5)):
 					del size
+					print("{}Les valeurs doivent être supérieur à 5".format(Icons.warn))
 
 			except Exception as e:
-				print("{}La valeur doit être un entier et supérieur à 5".format(Icons.warn))
+				print("{}Les valeurs doivent être des entiers supérieur à 5".format(Icons.warn))
 
-		map.initMap(int(size["x"]), int(size["y"]))
+		map.initMap((int(size["x"]), int(size["y"])))
 
 	map.start()
 
