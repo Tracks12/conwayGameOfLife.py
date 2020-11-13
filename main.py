@@ -1,30 +1,56 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
 from sys import argv, version_info
 
 # Importation des dépendances internes
 from core.icons import Icons
+
+if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
+	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
+	exit()
+
+from core.entity import Entity
 from core.map import Map
 
-def arg(map = Map()): # Fonction d'entrée des arguments
+def arg(): # Fonction d'entrée des arguments
+	def mapEntry():
+		try:
+			map = Map(str(argv[2]))
+
+			return(map)
+
+		except Exception:
+			print("{}Aucun nom de map n'a été entrer".format(Icons.warn))
+
+			return(False)
+
+	def errMsg():
+		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
+		print('{}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"'.format(Icons.info))
+
+		return(False)
+
 	args = {
 		"prefix": (
-			(("-a", "--add"), "[(x, y), ...]"),
-			(("-A", "--add-entity"), "<type> <x> <y>"),
-			(("-d", "--display"), ""),
-			(("-n", "--new"), "<x> <y>"),
+			(("-a", "--add"), "<mapName> \"[(x, y), ...]\""),
+			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
+			(("-d", "--display"), "<mapName>"),
+			(("-n", "--new"), "<mapName> <x> <y>"),
+			(("-r", "--reset"), "<mapName>"),
+			(("-s", "--start"), "<mapName>"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
 			"\tInsérer une ou plusieurs cellules",
 			"Insérer une entité",
-			"\t\t\tAfficher la map enregistrée",
-			"\t\tCréer une nouvelle map\n",
-			"\t\t\tAffichage du menu d'aide",
-			"\t\t\tAffichage de la version du programme\n"
+			"\t\tAfficher la map enregistrée",
+			"\t\tCréer une nouvelle map",
+			"\t\t\tRéinitialiser une map",
+			"\t\t\tJouer une map\n",
+			"\t\t\t\tAffichage du menu d'aide",
+			"\t\t\t\tAffichage de la version du programme\n"
 		)
 	}
 
@@ -39,74 +65,111 @@ def arg(map = Map()): # Fonction d'entrée des arguments
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
 
-	elif(argv[1] in args["prefix"][0][0]):
-		if(map.loadJSON()):
-			try:
-				map.addCells(eval(argv[2]))
+	if(
+		not (argv[1] in args["prefix"][-2][0])
+		and not (argv[1] in args["prefix"][-1][0])
+	):
+		map = mapEntry()
 
-			except Exception:
-				print("{}Coordonnées manquantes".format(Icons.warn))
-
+		if(argv[1] in args["prefix"][0][0]):
+			if(not map):
 				return(False)
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			if(map.loaded):
+				try:
+					map.addCells(eval(argv[3]))
+					map.display()
 
-	elif(argv[1] in args["prefix"][1][0]):
-		if(map.loadJSON()):
-			try:
-				x = int(argv[3])
-				y = int(argv[4])
+				except Exception:
+					print("{}Coordonnées manquantes ou incorrectes".format(Icons.warn))
 
-			except Exception:
-				print("{}Les coordonnées de position doivent être des entiers".format(Icons.warn))
+					return(False)
 
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][1][0]):
+			entities = Entity()
+			if(not map):
 				return(False)
 
-			try:
-				with open("entity.json", 'r') as outFile:
-					entity = json.load(outFile)
+			if(map.loaded):
+				try:
+					x = int(argv[4])
+					y = int(argv[5])
 
-					for item in entity:
-						entity[item].replace("x", str(x))
-						entity[item].replace("y", str(y))
-						entity[item] = eval(entity[item])
+				except Exception:
+					print("{}Les coordonnées de position sont incorrectes".format(Icons.warn))
 
-			except Exception:
-				print("{}Le fichier d'entités est introuvables".format(Icons.warn))
+					return(False)
 
+				if(entities.loaded):
+					if(argv[3] in entities.getEntitiesName()):
+						map.addCells(entities.get(argv[3], (x, y)))
+						map.display()
+
+					else:
+						print("{}Entitée non reconnue".format(Icons.warn))
+
+				else:
+					print("{}Le fichier d'entités est introuvables".format(Icons.warn))
+
+					return(False)
+
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][2][0]):
+			if(not map):
 				return(False)
 
-			if(argv[2] in entity):
-				map.addCells(entity[argv[2]])
+			if(map.loaded):
 				map.display()
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			else:
+				return(errMsg())
 
-	elif(argv[1] in args["prefix"][2][0]):
-		if(map.loadJSON()):
-			map.display()
+		elif(argv[1] in args["prefix"][3][0]):
+			if(not map):
+				return(False)
 
-		else:
-			print("{}Il y a pas de map sauvegardée".format(Icons.warn))
-			print('{}Créer une nouvelle map avec "python main.py -n <x> <y>"'.format(Icons.info))
+			try:
+				map.initMap(int(argv[3]), int(argv[4]))
+				map.display()
 
-	elif(argv[1] in args["prefix"][3][0]):
-		try:
-			map.initMap(int(argv[2]), int(argv[3]))
-			map.display()
+			except Exception:
+				print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
 
-		except Exception:
-			print("{}Spécifier les dimension <x> et <y>".format(Icons.warn))
+				return(False)
+
+		elif(argv[1] in args["prefix"][4][0]):
+			if(not map):
+				return(False)
+
+			if(map.loaded):
+				map.reset()
+				map.display()
+
+			else:
+				return(errMsg())
+
+		elif(argv[1] in args["prefix"][5][0]):
+			if(not map):
+				return(False)
+
+			if(map.loaded):
+				map.start()
+
+			else:
+				return(errMsg())
 
 	return(True)
 
-def main(map = Map()): # Fonction principale de l'execution du programme
-	if(not map.loadJSON()):
-		print("{}Il y a pas de map sauvegardée".format(Icons.warn))
+def main(): # Fonction principale de l'execution du programme
+	map = Map(str(input("Entrer un nom de map à charger: ")))
+
+	if(not map.loaded):
+		print("{}Il y a pas de map sauvegardée portant ce nom".format(Icons.warn))
 		print("{}Création d'une nouvelle map ...".format(Icons.info))
 
 		while("size" not in locals()):
@@ -118,11 +181,12 @@ def main(map = Map()): # Fonction principale de l'execution du programme
 
 				if((size["x"] < 5) or (size["y"] < 5)):
 					del size
+					print("{}Les valeurs doivent être supérieur à 5".format(Icons.warn))
 
 			except Exception as e:
-				print("{}La valeur doit être un entier et supérieur à 5".format(Icons.warn))
+				print("{}Les valeurs doivent être des entiers supérieur à 5".format(Icons.warn))
 
-		map.initMap(size["x"], size["y"])
+		map.initMap((int(size["x"]), int(size["y"])))
 
 	map.start()
 
