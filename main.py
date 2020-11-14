@@ -189,7 +189,7 @@ def main(): # Fonction principale de l'execution du programme
 			except Exception as e:
 				print(f"{Icons.warn}Les valeurs doivent être des entiers supérieur à 5")
 
-		map.initMap((int(size["x"]), int(size["y"])))
+		map.initMap(int(size["x"]), int(size["y"]))
 
 	map.start()
 
