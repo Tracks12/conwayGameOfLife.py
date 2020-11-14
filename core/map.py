@@ -80,7 +80,7 @@ class Map:
 	def display(self): # Affichage de la map avec/sans les statistiques
 		shell('clear' if(system() == "Linux") else 'cls')
 
-		if(bool(self.stat)): # Initialisation des statistiques
+		if(bool(self.stat)): # Initialisation & Mise à jours des statistiques
 			active = 0
 
 			for cells in self.__map:
@@ -96,10 +96,9 @@ class Map:
 		for i, line in enumerate(self.__map):
 			row = ""
 			for value in line:
-				row += f"{Colors.green}O" if(value) else f"{Colors.cyan}."
-				row += f"{Colors.end} "
+				row += f'{f"{Colors.green}O" if(value) else f"{Colors.cyan}."}{Colors.end} '
 
-			if(bool(self.stat) and (i < len(stats))): # Mise à jours des statistiques
+			if(bool(self.stat) and (i < len(stats))): # Affichage des statistiques
 				row += f" {stats[i]}"
 
 			print(row)

@@ -22,7 +22,7 @@ def arg(): # Fonction d'entrée des arguments
 
 	args = {
 		"prefix": (
-			(("-a", "--add"), "<mapName> \"[(x, y), ...]\""),
+			(("-a", "--add"), '<mapName> "[(x, y), ...]"'),
 			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
 			(("-d", "--display"), "<mapName>"),
 			(("-n", "--new"), "<mapName> <x> <y>"),
