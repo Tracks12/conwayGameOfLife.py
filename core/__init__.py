@@ -29,6 +29,13 @@ class Icons: # Module d'icône ascii
 	info = f" {Colors.bold}{Colors.blue}(i){Colors.end} - "
 	tips = f" {Colors.bold}{Colors.green}(?){Colors.end} - "
 
+class B64: # Encode/Decode ascii string
+    def encode(str = ""):
+        return(b64encode(str.encode("ascii")).decode("ascii"))
+
+    def decode(str = ""):
+        return(b64decode(str).decode("ascii"))
+
 def JSONloader(file, msg = ["", "", ""]): # Fonction de barre de chargement
 	arr = ['\\', '|', '/', '-']
 
