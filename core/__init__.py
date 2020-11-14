@@ -1,9 +1,8 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
-from json import load
+from base64 import b64decode, b64encode
 from platform import system
-from time import sleep
 
 class Colors: # Module de coloration pour les système Linux/Unix
 	if(system() == "Linux"):
@@ -25,29 +24,18 @@ class Colors: # Module de coloration pour les système Linux/Unix
 		red = green = yellow = blue = purple = cyan = white = ""
 
 class Icons: # Module d'icône ascii
-	warn = f" {Colors.bold}{Colors.red}[!]{Colors.end} - "
-	info = f" {Colors.bold}{Colors.blue}(i){Colors.end} - "
-	tips = f" {Colors.bold}{Colors.green}(?){Colors.end} - "
+	# Icônes fixes
+	warn	= f" {Colors.bold}{Colors.red}[!]{Colors.end} - "
+	info	= f" {Colors.bold}{Colors.blue}(i){Colors.end} - "
+	tips	= f" {Colors.bold}{Colors.green}(?){Colors.end} - "
+
+	# Icônes de chargement
+	succ	= f" [{Colors.green}*{Colors.end}] "
+	fail	= f" [{Colors.red}*{Colors.end}] "
 
 class B64: # Encode/Decode ascii string
-    def encode(str = ""):
-        return(b64encode(str.encode("ascii")).decode("ascii"))
+	def encode(str = ""):
+		return(b64encode(str.encode("ascii")))
 
-    def decode(str = ""):
-        return(b64decode(str).decode("ascii"))
-
-def JSONloader(file, msg = ["", "", ""]): # Fonction de barre de chargement
-	arr = ['\\', '|', '/', '-']
-
-	for i in range(0, 10):
-		print(f" [{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg[0]}", end = "\r")
-		sleep(.05)
-
-	try:
-		dataJSON = load(file)
-		print(f" [{Colors.green}*{Colors.end}] {msg[1]}")
-		return(dataJSON)
-
-	except:
-		print(f" [{Colors.red}*{Colors.end}] {msg[2]}")
-		return(False)
+	def decode(str = ""):
+		return(b64decode(str).decode("ascii"))

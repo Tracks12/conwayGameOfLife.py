@@ -5,16 +5,18 @@
 # ce module contient les fonctionnalités de sauvegarde et de chargement de la map
 # ainsi que la mise à jour de celle-ci
 
-from json import dump
+from json import dumps
 from os import system as shell
 from platform import system
 from time import sleep
+from zlib import compress
 
-from core import Colors, JSONloader
+from core import B64, Colors
+from core.loader import Loader
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
-		self.__path		= str(f"saves/{str(mapName)}.json")
+		self.__path		= str(f"saves/{str(mapName)}.map")
 		self.__dims		= tuple((0, 0))
 		self.__cells	= int(self.__dims[0]*self.__dims[1])
 		self.__map		= list([])
@@ -24,8 +26,8 @@ class Map:
 
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
-			with open(self.__path, "r") as outFile:
-				self.__map		= list(JSONloader(outFile, ["Loading map ...", "Map loaded !", "Map loading failed !"]))
+			with open(self.__path, "rb") as outFile:
+				self.__map		= list(Loader.map(outFile, ["Loading map ...", "Map loaded !", "Map loading failed !"]))
 				self.__dims		= tuple((len(self.__map), len(self.__map[0])))
 				self.__cells	= int(self.__dims[1]*self.__dims[0])
 
@@ -36,8 +38,8 @@ class Map:
 
 	def __saveJSON(self): # Sauvegarde dans un fichier
 		try:
-			with open(self.__path, "w") as inFile:
-				dump(self.__map, inFile)
+			with open(self.__path, "wb") as inFile:
+				inFile.write(compress(B64.encode(dumps(self.__map))))
 
 			return(True)
 
