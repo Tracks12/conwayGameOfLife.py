@@ -15,17 +15,6 @@ from core.entity import Entity
 from core.map import Map
 
 def arg(): # Fonction d'entrée des arguments
-	def mapEntry():
-		try:
-			map = Map(str(argv[2]))
-
-			return(map)
-
-		except Exception:
-			print(f"{Icons.warn}Aucun nom de map n'a été entrer")
-
-			return(False)
-
 	def errMsg():
 		print(f"{Icons.warn}Il y a pas de map sauvegardée portant ce nom")
 		print(f'{Icons.info}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"')
@@ -70,12 +59,15 @@ def arg(): # Fonction d'entrée des arguments
 		not (argv[1] in args["prefix"][-2][0])
 		and not (argv[1] in args["prefix"][-1][0])
 	):
-		map = mapEntry()
+		try:
+			map = Map(str(argv[2]))
+
+		except Exception:
+			print(f"{Icons.warn}Aucun nom de map n'a été entrer")
+
+			return(False)
 
 		if(argv[1] in args["prefix"][0][0]):
-			if(not map):
-				return(False)
-
 			if(map.loaded):
 				try:
 					map.addCells(eval(argv[3]))
@@ -90,9 +82,6 @@ def arg(): # Fonction d'entrée des arguments
 				return(errMsg())
 
 		elif(argv[1] in args["prefix"][1][0]):
-			if(not map):
-				return(False)
-
 			if(map.loaded):
 				entities = Entity()
 
@@ -122,9 +111,6 @@ def arg(): # Fonction d'entrée des arguments
 				return(errMsg())
 
 		elif(argv[1] in args["prefix"][2][0]):
-			if(not map):
-				return(False)
-
 			if(map.loaded):
 				map.display()
 
@@ -132,9 +118,6 @@ def arg(): # Fonction d'entrée des arguments
 				return(errMsg())
 
 		elif(argv[1] in args["prefix"][3][0]):
-			if(not map):
-				return(False)
-
 			try:
 				map.initMap(int(argv[3]), int(argv[4]))
 				map.display()
@@ -145,9 +128,6 @@ def arg(): # Fonction d'entrée des arguments
 				return(False)
 
 		elif(argv[1] in args["prefix"][4][0]):
-			if(not map):
-				return(False)
-
 			if(map.loaded):
 				map.reset()
 				map.display()
@@ -156,9 +136,6 @@ def arg(): # Fonction d'entrée des arguments
 				return(errMsg())
 
 		elif(argv[1] in args["prefix"][5][0]):
-			if(not map):
-				return(False)
-
 			if(map.loaded):
 				map.start()
 
