@@ -7,7 +7,7 @@ from sys import argv, version_info
 from core import Colors, Icons
 
 if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
-	print(f"{Icons.warn}Le programme doit être lancer avec Python 3")
+	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
 	exit()
 
 from core.entity import Entity
