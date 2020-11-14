@@ -4,7 +4,7 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
-from core.loader import JSONloader
+from core import JSONloader
 
 class Entity:
 	def __init__(self):

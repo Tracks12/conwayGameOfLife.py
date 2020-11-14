@@ -12,9 +12,9 @@ La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
 
 L'installation de **[Python 3](https://www.python.org/downloads/)** est recommandé pour l'éxécution du script
 
-## Dépendances
+### Dépendances
 
-- [json](https://docs.python.org/3/library/json.html)
+- [json.dump](https://docs.python.org/3/library/json.html#json.dump), [json.load](https://docs.python.org/3/library/json.html#json.load)
 - [os.system](https://docs.python.org/3/library/os.html#os.system)
 - [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv), [sys.version_info](https://docs.python.org/3/library/sys.html#sys.version_info)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)

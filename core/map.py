@@ -10,8 +10,7 @@ from os import system as shell
 from platform import system
 from time import sleep
 
-from core.colors import Colors
-from core.loader import JSONloader
+from core import Colors, JSONloader
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"

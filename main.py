@@ -4,8 +4,7 @@
 from sys import argv, version_info
 
 # Importation des dépendances internes
-from core.colors import Colors
-from core.icons import Icons
+from core import Colors, Icons
 
 if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
 	print(f"{Icons.warn}Le programme doit être lancer avec Python 3")
