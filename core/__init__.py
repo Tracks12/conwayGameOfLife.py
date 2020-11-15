@@ -30,10 +30,10 @@ class Icons: # Module d'icône ascii
 	tips	= f" {Colors.bold}{Colors.green}(?){Colors.end} - "
 
 	# Icônes de chargement
-	succ	= f" [{Colors.green}*{Colors.end}] "
-	fail	= f" [{Colors.red}*{Colors.end}] "
+	succ	= f" [{Colors.bold}{Colors.green}*{Colors.end}] "
+	fail	= f" [{Colors.bold}{Colors.red}*{Colors.end}] "
 
-class B64: # Encode/Decode ascii string
+class B64: # Encode/Decode ascii string in base64
 	def encode(str = ""):
 		return(b64encode(str.encode("ascii")))
 

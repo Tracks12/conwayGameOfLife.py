@@ -12,7 +12,7 @@ class Loader: # Module de chargements
 		arr = ['\\', '|', '/', '-']
 
 		for i in range(0, 10):
-			print(f" [{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
+			print(f" [{Colors.bold}{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
 			sleep(.05)
 
 	def map(file, msg = ["", "", ""]): # Méthode de chargement pour fichier MAP
