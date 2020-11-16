@@ -12,13 +12,15 @@ La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
 
 L'installation de **[Python 3](https://www.python.org/downloads/)** est recommandé pour l'éxécution du script
 
-## Dépendances
+### Dépendances
 
-- [json](https://docs.python.org/3/library/json.html)
+- [base64.b64decode](https://docs.python.org/3/library/base64.html#base64.b64decode), [base64.b64encode](https://docs.python.org/3/library/base64.html#base64.b64encode)
+- [json.dumps](https://docs.python.org/3/library/json.html#json.dumps), [json.loads](https://docs.python.org/3/library/json.html#json.loads)
 - [os.system](https://docs.python.org/3/library/os.html#os.system)
 - [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv), [sys.version_info](https://docs.python.org/3/library/sys.html#sys.version_info)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
+- [zlib.compress](https://docs.python.org/3/library/zlib.html#zlib.compress), [zlib.decompress](https://docs.python.org/3/library/zlib.html#zlib.decompress)
 
 ## Utilisations
 
@@ -34,7 +36,7 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **JSON** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.json](saves/world.json)**_)
+Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.map](saves/world.map)**_)
 
 ### Les entités
 

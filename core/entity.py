@@ -4,9 +4,7 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
-import json
-
-from core.loader import loadBar
+from core.loader import Loader
 
 class Entity:
 	def __init__(self):
@@ -17,8 +15,7 @@ class Entity:
 	def __loadJSON(self): # Chargement des entités depuis un fichier
 		try:
 			with open(self.__path, 'r') as outFile:
-				loadBar(["Entity loading ...", "Entities loaded !"])
-				self.__entities = dict(json.load(outFile))
+				self.__entities = dict(Loader.json(outFile, ["Entity loading ...", "Entities loaded !", "Entity loading Failed !"]))
 
 			return(True)
 
