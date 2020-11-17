@@ -4,6 +4,22 @@ Le jeu de la vie de John Horton Conway
 
 Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)** du jeu de la vie.
 
+## Sommaire
+
+1. [Consignes](#Consignes)
+2. [Pré-requis](#Pré-requis)
+
+   2.1. [Dépendances](#Dépendances)
+
+3. [Utilisations](#Utilisations)
+4. [Sauvegarde](#Sauvegarde)
+
+   4.1 [Les entités](#Les-entités)
+
+5. [Exemples d'utilisations](#Exemples-d'utilisations)
+6. [Remarque](#Remarque)
+7. [Licence](#Licence)
+
 ## Consignes
 
 La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
