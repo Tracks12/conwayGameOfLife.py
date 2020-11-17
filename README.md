@@ -6,19 +6,19 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
 
 ## Sommaire
 
-1. [Consignes](#Consignes)
-2. [Pré-requis](#Pré-requis)
+1. [Consignes](#consignes)
+2. [Pré-requis](#pré-requis)
 
-   2.1. [Dépendances](#Dépendances)
+   2.1. [Dépendances](#dépendances)
 
-3. [Utilisations](#Utilisations)
-4. [Sauvegarde](#Sauvegarde)
+3. [Utilisations](#utilisations)
+4. [Sauvegarde](#sauvegarde)
 
-   4.1 [Les entités](#Les-entités)
+   4.1 [Les entités](#les-entités)
 
-5. [Exemples d'utilisations](#Exemples-d'utilisations)
-6. [Remarque](#Remarque)
-7. [Licence](#Licence)
+5. [Exemples d'utilisations](##exemples-dutilisations)
+6. [Remarque](#remarque)
+7. [Licence](#licence)
 
 ## Consignes
 
