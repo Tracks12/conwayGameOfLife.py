@@ -12,7 +12,7 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
 3. [Utilisations](#utilisations)
 4. [Sauvegarde](#sauvegarde)
    - [Les entités](#les-entités)
-5. [Exemples d'utilisations](##exemples-dutilisations)
+5. [Exemples d'utilisations](#exemples-dutilisations)
 6. [Remarque](#remarque)
 7. [Licence](#licence)
 
