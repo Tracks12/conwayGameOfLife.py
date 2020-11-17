@@ -20,13 +20,13 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
 
 La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ## Pré-requis
 
 L'installation de **[Python 3](https://www.python.org/downloads/)** est recommandé pour l'éxécution du script
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ### Dépendances
 
@@ -38,7 +38,7 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 - [zlib.compress](https://docs.python.org/3/library/zlib.html#zlib.compress), [zlib.decompress](https://docs.python.org/3/library/zlib.html#zlib.decompress)
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ## Utilisations
 
@@ -52,13 +52,13 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 | Réinitialiser une map               | `$ python main.py -r <mapName>`<br />`$ python main.py --reset <mapName>`                                    |
 | Jouer une map                       | `$ python main.py -s <mapName>`<br />`$ python main.py --start <mapName>`                                    |
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ## Sauvegarde
 
 Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.map](saves/world.map)**_)
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ### Les entités
 
@@ -73,7 +73,7 @@ Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en sui
 }
 ```
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ## Exemples d'utilisations
 
@@ -89,7 +89,7 @@ On ajoute les cellules active de sorte à former une entité:
 
 Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on souhaite charger, ou bien le jeu avec la map souhaitée en entrant `$ python main.py -s world` directement
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ### Remarque
 
@@ -100,10 +100,10 @@ Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on 
 
 Si vous voulez entièrement la réinitialiser, `$ python main.py -r world` remet toutes les cellules d'une map à 0
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
 
 ## Licence
 
 Code sous license [GPL v3](LICENSE)
 
-[Aller en haut](#conwaygameoflife)
+[Sommaire](#sommaire)
