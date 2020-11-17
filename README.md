@@ -8,14 +8,10 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
 
 1. [Consignes](#consignes)
 2. [Pré-requis](#pré-requis)
-
-   2.1. [Dépendances](#dépendances)
-
+   - [Dépendances](#dépendances)
 3. [Utilisations](#utilisations)
 4. [Sauvegarde](#sauvegarde)
-
-   4.1 [Les entités](#les-entités)
-
+   - [Les entités](#les-entités)
 5. [Exemples d'utilisations](##exemples-dutilisations)
 6. [Remarque](#remarque)
 7. [Licence](#licence)
