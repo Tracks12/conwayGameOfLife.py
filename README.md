@@ -4,13 +4,30 @@ Le jeu de la vie de John Horton Conway
 
 Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)** du jeu de la vie.
 
+## Sommaire
+
+1. [Consignes](#consignes)
+2. [Pré-requis](#pré-requis)
+   - [Dépendances](#dépendances)
+3. [Utilisations](#utilisations)
+4. [Sauvegarde](#sauvegarde)
+   - [Les entités](#les-entités)
+5. [Exemples d'utilisations](#exemples-dutilisations)
+   - [Aperçu](#aperçu)
+   - [Remarque](#remarque)
+6. [Licence](#licence)
+
 ## Consignes
 
 La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
 
+[Sommaire](#sommaire)
+
 ## Pré-requis
 
 L'installation de **[Python 3](https://www.python.org/downloads/)** est recommandé pour l'éxécution du script
+
+[Sommaire](#sommaire)
 
 ### Dépendances
 
@@ -21,6 +38,8 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
 - [zlib.compress](https://docs.python.org/3/library/zlib.html#zlib.compress), [zlib.decompress](https://docs.python.org/3/library/zlib.html#zlib.decompress)
+
+[Sommaire](#sommaire)
 
 ## Utilisations
 
@@ -34,9 +53,13 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 | Réinitialiser une map               | `$ python main.py -r <mapName>`<br />`$ python main.py --reset <mapName>`                                    |
 | Jouer une map                       | `$ python main.py -s <mapName>`<br />`$ python main.py --start <mapName>`                                    |
 
+[Sommaire](#sommaire)
+
 ## Sauvegarde
 
 Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.map](saves/world.map)**_)
+
+[Sommaire](#sommaire)
 
 ### Les entités
 
@@ -51,9 +74,9 @@ Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en sui
 }
 ```
 
-## Exemples d'utilisations
+[Sommaire](#sommaire)
 
-![aperçu](preview.gif)
+## Exemples d'utilisations
 
 On génère une nouvelle map qu'on va appeller "world" avec `$ python main.py -n world 50 50`
 
@@ -65,6 +88,14 @@ On ajoute les cellules active de sorte à former une entité:
 
 Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on souhaite charger, ou bien le jeu avec la map souhaitée en entrant `$ python main.py -s world` directement
 
+[Sommaire](#sommaire)
+
+### Aperçu
+
+![aperçu](preview.gif)
+
+[Sommaire](#sommaire)
+
 ### Remarque
 
 - Vous pouvez checker votre configuration avec `$ python main.py -d world` pour afficher la map avec vos cellules actives
@@ -74,6 +105,10 @@ Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on 
 
 Si vous voulez entièrement la réinitialiser, `$ python main.py -r world` remet toutes les cellules d'une map à 0
 
+[Sommaire](#sommaire)
+
 ## Licence
 
 Code sous license [GPL v3](LICENSE)
+
+[Sommaire](#sommaire)
