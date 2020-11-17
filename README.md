@@ -11,6 +11,7 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
    - [Dépendances](#dépendances)
 3. [Utilisations](#utilisations)
 4. [Sauvegarde](#sauvegarde)
+   - [Aperçu](#aperçu)
    - [Les entités](#les-entités)
 5. [Exemples d'utilisations](#exemples-dutilisations)
 6. [Remarque](#remarque)
@@ -77,8 +78,6 @@ Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en sui
 
 ## Exemples d'utilisations
 
-![aperçu](preview.gif)
-
 On génère une nouvelle map qu'on va appeller "world" avec `$ python main.py -n world 50 50`
 
 On ajoute les cellules active de sorte à former une entité:
@@ -88,6 +87,12 @@ On ajoute les cellules active de sorte à former une entité:
 - **Planeur**: `$ python main.py -a world "[(1,1), (2,2), (2,3), (3,1), (3,2)]"`
 
 Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on souhaite charger, ou bien le jeu avec la map souhaitée en entrant `$ python main.py -s world` directement
+
+[Sommaire](#sommaire)
+
+### Aperçu
+
+![aperçu](preview.gif)
 
 [Sommaire](#sommaire)
 
