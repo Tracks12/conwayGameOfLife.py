@@ -11,11 +11,11 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
    - [Dépendances](#dépendances)
 3. [Utilisations](#utilisations)
 4. [Sauvegarde](#sauvegarde)
-   - [Aperçu](#aperçu)
    - [Les entités](#les-entités)
 5. [Exemples d'utilisations](#exemples-dutilisations)
-6. [Remarque](#remarque)
-7. [Licence](#licence)
+   - [Aperçu](#aperçu)
+   - [Remarque](#remarque)
+6. [Licence](#licence)
 
 ## Consignes
 
