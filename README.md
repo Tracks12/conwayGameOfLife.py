@@ -11,6 +11,7 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
    - [Dépendances](#dépendances)
 3. [Utilisations](#utilisations)
 4. [Sauvegarde](#sauvegarde)
+   - [Les entités](#les-entités)
 5. [Exemples d'utilisations](#exemples-dutilisations)
    - [Aperçu](#aperçu)
    - [Remarque](#remarque)
