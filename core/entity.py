@@ -15,7 +15,7 @@ class Entity:
 	def __loadJSON(self): # Chargement des entités depuis un fichier
 		try:
 			with open(self.__path, 'r') as outFile:
-				self.__entities = dict(Loader.json(outFile, ["Entity loading ...", "Entities loaded !", "Entity loading Failed !"]))
+				self.__entities = dict(Loader.json(outFile, ["Loading entities ...", "Entities loaded !   ", "Entities loading Failed !"]))
 
 			return(True)
 

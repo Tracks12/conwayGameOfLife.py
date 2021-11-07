@@ -27,7 +27,7 @@ class Map:
 	def __loadJSON(self): # Chargement depuis un fichier
 		try:
 			with open(self.__path, "rb") as outFile:
-				self.__map		= list(Loader.map(outFile, ["Loading map ...", "Map loaded !", "Map loading failed !"]))
+				self.__map		= list(Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"]))
 				self.__dims		= tuple((len(self.__map), len(self.__map[0])))
 				self.__cells	= int(self.__dims[1]*self.__dims[0])
 
