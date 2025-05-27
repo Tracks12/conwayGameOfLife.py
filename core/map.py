@@ -7,6 +7,7 @@
 
 from json import dumps
 from os import system as shell
+from os.path import abspath, dirname
 from platform import system
 from time import sleep
 from zlib import compress
@@ -16,7 +17,7 @@ from core.loader import Loader
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
-		self.__path		= str(f"saves/{str(mapName)}.map")
+		self.__path		= str(f"{dirname(abspath(__file__))}/../saves/{str(mapName)}.map")
 		self.__dims		= tuple((0, 0))
 		self.__cells	= int(self.__dims[0]*self.__dims[1])
 		self.__map		= list([])

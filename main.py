@@ -32,14 +32,14 @@ def arg(): # Fonction d'entrée des arguments
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
-			"\tInsérer une ou plusieurs cellules",
+			"Insérer une ou plusieurs cellules",
 			"Insérer une entité",
-			"\t\tAfficher la map enregistrée",
-			"\t\tCréer une nouvelle map",
-			"\t\t\tRéinitialiser une map",
-			"\t\t\tJouer une map\n",
-			"\t\t\t\tAffichage du menu d'aide",
-			"\t\t\t\tAffichage de la version du programme\n"
+			"Afficher la map enregistrée",
+			"Créer une nouvelle map",
+			"Réinitialiser une map",
+			"Jouer une map\n",
+			"Affichage du menu d'aide",
+			"Affichage de la version du programme\n"
 		)
 	}
 
@@ -49,7 +49,8 @@ def arg(): # Fonction d'entrée des arguments
 		print(" Arguments:")
 
 		for i in range(0, len(args["prefix"])):
-			print(f' {args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}\t{args["descriptions"][i]}')
+			_p = f'{args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}'
+			print(f' {_p}{" "*(44-len(_p))}{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")

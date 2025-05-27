@@ -4,11 +4,13 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
+from os.path import abspath, dirname
+
 from core.loader import Loader
 
 class Entity:
 	def __init__(self):
-		self.__path		= str("entity.json")
+		self.__path		= str(f"{dirname(abspath(__file__))}/../entity.json")
 		self.__entities	= dict({})
 		self.loaded		= bool(self.__loadJSON())
 
