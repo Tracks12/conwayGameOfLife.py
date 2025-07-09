@@ -23,7 +23,7 @@ class Loader: # Module de chargements
 			print(f"{Icons.succ}{msg[1]}")
 			return(dataMAP)
 
-		except Exception:
+		except(Exception):
 			print(f"{Icons.fail}{msg[2]}")
 			return(False)
 
@@ -35,6 +35,6 @@ class Loader: # Module de chargements
 			print(f"{Icons.succ}{msg[1]}")
 			return(dataMAP)
 
-		except Exception:
+		except(Exception):
 			print(f"{Icons.fail}{msg[2]}")
 			return(False)

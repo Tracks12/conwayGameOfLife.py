@@ -1,10 +1,11 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 
+from os import system as shell
 from sys import argv, version_info
 
 # Importation des dépendances internes
-from core import Colors, Icons
+from core import CMD_CLEAR, Colors, Icons
 
 if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
 	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
@@ -32,14 +33,14 @@ def arg(): # Fonction d'entrée des arguments
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
-			"\tInsérer une ou plusieurs cellules",
+			"Insérer une ou plusieurs cellules",
 			"Insérer une entité",
-			"\t\tAfficher la map enregistrée",
-			"\t\tCréer une nouvelle map",
-			"\t\t\tRéinitialiser une map",
-			"\t\t\tJouer une map\n",
-			"\t\t\t\tAffichage du menu d'aide",
-			"\t\t\t\tAffichage de la version du programme\n"
+			"Afficher la map enregistrée",
+			"Créer une nouvelle map",
+			"Réinitialiser une map",
+			"Jouer une map\n",
+			"Affichage du menu d'aide",
+			"Affichage de la version du programme\n"
 		)
 	}
 
@@ -49,10 +50,11 @@ def arg(): # Fonction d'entrée des arguments
 		print(" Arguments:")
 
 		for i in range(0, len(args["prefix"])):
-			print(f' {args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}\t{args["descriptions"][i]}')
+			_p = f'{args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}'
+			print(f' {_p}{" "*(44-len(_p))}{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 2.1 - Florian Cardinal\n")
+		print(" conwayGameOfLife.py 2.2 - Florian Cardinal\n")
 
 	if(
 		not (argv[1] in args["prefix"][-2][0])
@@ -61,7 +63,7 @@ def arg(): # Fonction d'entrée des arguments
 		try:
 			map = Map(str(argv[2]))
 
-		except Exception:
+		except(Exception):
 			print(f"{Icons.warn}Aucun nom de map n'a été entrer")
 
 			return(False)
@@ -70,9 +72,10 @@ def arg(): # Fonction d'entrée des arguments
 			if(map.loaded):
 				try:
 					map.addCells(eval(argv[3]))
+					shell(CMD_CLEAR)
 					map.display()
 
-				except Exception:
+				except(Exception):
 					print(f"{Icons.warn}Coordonnées manquantes ou incorrectes")
 
 					return(False)
@@ -88,7 +91,7 @@ def arg(): # Fonction d'entrée des arguments
 					x = int(argv[4])
 					y = int(argv[5])
 
-				except Exception:
+				except(Exception):
 					print(f"{Icons.warn}Les coordonnées de position sont incorrectes")
 
 					return(False)
@@ -96,6 +99,7 @@ def arg(): # Fonction d'entrée des arguments
 				if(entities.loaded):
 					if(argv[3] in entities.getEntitiesName()):
 						map.addCells(entities.get(argv[3], (x, y)))
+						shell(CMD_CLEAR)
 						map.display()
 
 					else:
@@ -111,6 +115,7 @@ def arg(): # Fonction d'entrée des arguments
 
 		elif(argv[1] in args["prefix"][2][0]):
 			if(map.loaded):
+				shell(CMD_CLEAR)
 				map.display()
 
 			else:
@@ -119,9 +124,10 @@ def arg(): # Fonction d'entrée des arguments
 		elif(argv[1] in args["prefix"][3][0]):
 			try:
 				map.initMap(int(argv[3]), int(argv[4]))
+				shell(CMD_CLEAR)
 				map.display()
 
-			except Exception:
+			except(Exception):
 				print(f"{Icons.warn}Spécifier les dimension <x> et <y>")
 
 				return(False)
@@ -129,6 +135,7 @@ def arg(): # Fonction d'entrée des arguments
 		elif(argv[1] in args["prefix"][4][0]):
 			if(map.loaded):
 				map.reset()
+				shell(CMD_CLEAR)
 				map.display()
 
 			else:
@@ -162,7 +169,7 @@ def main(): # Fonction principale de l'execution du programme
 					del size
 					print(f"{Icons.warn}Les valeurs doivent être supérieur à 5")
 
-			except Exception as e:
+			except(Exception):
 				print(f"{Icons.warn}Les valeurs doivent être des entiers supérieur à 5")
 
 		map.initMap(int(size["x"]), int(size["y"]))

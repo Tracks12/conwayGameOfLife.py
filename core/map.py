@@ -7,16 +7,16 @@
 
 from json import dumps
 from os import system as shell
-from platform import system
+from os.path import abspath, dirname
 from time import sleep
 from zlib import compress
 
-from core import B64, Colors
+from core import B64, CMD_CLEAR, Colors
 from core.loader import Loader
 
 class Map:
 	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
-		self.__path		= str(f"saves/{str(mapName)}.map")
+		self.__path		= str(f"{dirname(abspath(__file__))}/../saves/{str(mapName)}.map")
 		self.__dims		= tuple((0, 0))
 		self.__cells	= int(self.__dims[0]*self.__dims[1])
 		self.__map		= list([])
@@ -33,7 +33,7 @@ class Map:
 
 			return(True)
 
-		except Exception:
+		except(Exception):
 			return(False)
 
 	def __saveJSON(self): # Sauvegarde dans un fichier
@@ -43,7 +43,7 @@ class Map:
 
 			return(True)
 
-		except Exception:
+		except(Exception):
 			return(False)
 
 	# Création d'une map sur un format pré-défini
@@ -80,8 +80,6 @@ class Map:
 		return(self.__saveJSON())
 
 	def display(self): # Affichage de la map avec/sans les statistiques
-		shell('clear' if(system() == "Linux") else 'cls')
-
 		if(bool(self.stat)): # Initialisation & Mise à jours des statistiques
 			active = 0
 
@@ -122,7 +120,10 @@ class Map:
 		self.__saveJSON()
 
 	def start(self): # Lancement du jeu
+		shell(CMD_CLEAR)
+
 		while(True):
+			print("\x1b[A"*self.__dims[1], end="\r") # Effacement de la ligne précédente
 			self.__update()
 			self.display()
 			sleep(.1)
