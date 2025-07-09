@@ -4,6 +4,8 @@
 from base64 import b64decode, b64encode
 from platform import system
 
+CMD_CLEAR = "clear" if(system() == "Linux") else "cls" # Commande de nettoyage de la console
+
 class Colors: # Module de coloration pour les système Linux/Unix
 	if(system() == "Linux"):
 		bold	= "\033[1m"

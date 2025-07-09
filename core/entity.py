@@ -21,7 +21,7 @@ class Entity:
 
 			return(True)
 
-		except Exception:
+		except(Exception):
 			return(False)
 
 	def __build(self, coord): # Build with relative position

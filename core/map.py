@@ -8,11 +8,10 @@
 from json import dumps
 from os import system as shell
 from os.path import abspath, dirname
-from platform import system
 from time import sleep
 from zlib import compress
 
-from core import B64, Colors
+from core import B64, CMD_CLEAR, Colors
 from core.loader import Loader
 
 class Map:
@@ -34,7 +33,7 @@ class Map:
 
 			return(True)
 
-		except Exception:
+		except(Exception):
 			return(False)
 
 	def __saveJSON(self): # Sauvegarde dans un fichier
@@ -44,7 +43,7 @@ class Map:
 
 			return(True)
 
-		except Exception:
+		except(Exception):
 			return(False)
 
 	# Création d'une map sur un format pré-défini
@@ -81,8 +80,6 @@ class Map:
 		return(self.__saveJSON())
 
 	def display(self): # Affichage de la map avec/sans les statistiques
-		shell('clear' if(system() == "Linux") else 'cls')
-
 		if(bool(self.stat)): # Initialisation & Mise à jours des statistiques
 			active = 0
 
@@ -123,7 +120,10 @@ class Map:
 		self.__saveJSON()
 
 	def start(self): # Lancement du jeu
+		shell(CMD_CLEAR)
+
 		while(True):
+			print("\x1b[A"*self.__dims[1], end="\r") # Effacement de la ligne précédente
 			self.__update()
 			self.display()
 			sleep(.1)
