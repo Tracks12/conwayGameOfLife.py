@@ -126,6 +126,6 @@ class Map:
 			print("\x1b[A"*self.__dims[1], end="\r") # Effacement de la ligne précédente
 			self.__update()
 			self.display()
-			sleep(.1)
+			sleep(.025)
 
 		return(True)

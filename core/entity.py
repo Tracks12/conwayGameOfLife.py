@@ -4,21 +4,25 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
+from os import listdir
 from os.path import abspath, dirname
 
 from core.loader import Loader
 
 class Entity:
 	def __init__(self):
-		self.__path		= str(f"{dirname(abspath(__file__))}/../entity.json")
+		self.__path		= str(f"{abspath(dirname(__file__))}/../entities")
 		self.__entities	= dict({})
 		self.loaded		= bool(self.__loadJSON())
 
-	def __loadJSON(self): # Chargement des entités depuis un fichier
+	def __loadJSON(self): # Chargement des entités depuis le dossier "entities"
 		try:
-			with open(self.__path, 'r') as outFile:
-				self.__entities = dict(Loader.json(outFile, ["Loading entities ...", "Entities loaded !   ", "Entities loading Failed !"]))
+			print("Loading entities ...")
+			for entity in [ e.split(".")[0] for e in listdir(self.__path) ]:
+				with open(f"{self.__path}/{entity}.json", 'r') as outFile:
+					self.__entities[entity] = Loader.json(outFile, [f"Loading {entity} ...", f"{entity} loaded !   ", f"{entity} loading Failed !"])[entity]
 
+			print("Entities loaded !")
 			return(True)
 
 		except(Exception):

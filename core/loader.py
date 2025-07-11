@@ -13,7 +13,7 @@ class Loader: # Module de chargements
 
 		for i in range(0, 10):
 			print(f" [{Colors.bold}{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
-			sleep(.05)
+			sleep(.0025)
 
 	def map(file, msg = ["", "", ""]): # Méthode de chargement pour fichier MAP
 		Loader.anim(msg[0])
