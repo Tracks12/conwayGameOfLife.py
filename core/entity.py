@@ -12,10 +12,10 @@ from core.loader import Loader
 class Entity:
 	def __init__(self):
 		self.__path		= str(f"{abspath(dirname(__file__))}/../entities")
-		self.__entities	= dict({})
+		self.__entities	= dict[str, str]({})
 		self.loaded		= bool(self.__loadJSON())
 
-	def __loadJSON(self): # Chargement des entités depuis le dossier "entities"
+	def __loadJSON(self) -> bool: # Chargement des entités depuis le dossier "entities"
 		try:
 			print("Loading entities ...")
 			for entity in [ e.split(".")[0] for e in listdir(self.__path) ]:
@@ -28,8 +28,8 @@ class Entity:
 		except(Exception):
 			return(False)
 
-	def __build(self, coord): # Build with relative position
-		entities = dict(self.__entities)
+	def __build(self, coord) -> dict[str, str]: # Build with relative position
+		entities = dict[str, str](self.__entities)
 
 		for name in entities:
 			entities[name]	= str(entities[name].replace("x", str(coord[0])))
@@ -38,13 +38,8 @@ class Entity:
 
 		return(entities)
 
-	def getEntitiesName(self):
-		names = []
+	def getEntitiesName(self) -> list[str]:
+		return([ str(e) for e in self.__entities ])
 
-		for name in self.__entities:
-			names.append(str(name))
-
-		return(names)
-
-	def get(self, name, coord = (5, 5)): # Récupération d'une
+	def get(self, name, coord = (5, 5)) -> str: # Récupération d'une entité
 		return(self.__build(coord)[name])

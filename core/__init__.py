@@ -37,8 +37,8 @@ class Icons: # Module d'icône ascii
 	fail	= f" [{Colors.bold}{Colors.red}x{Colors.end}] "
 
 class B64: # Encode/Decode ascii string in base64
-	def encode(str = ""):
+	def encode(str: str = "") -> bytes:
 		return(b64encode(str.encode("ascii")))
 
-	def decode(str = ""):
+	def decode(str: bytes = "") -> str:
 		return(b64decode(str).decode("ascii"))

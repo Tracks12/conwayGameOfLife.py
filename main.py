@@ -14,8 +14,8 @@ if(version_info.major < 3): # Vérification de l'éxecution du script avec Pytho
 from core.entity import Entity
 from core.map import Map
 
-def arg(): # Fonction d'entrée des arguments
-	def errMsg():
+def arg() -> bool: # Fonction d'entrée des arguments
+	def errMsg() -> bool:
 		print(f"{Icons.warn}There is no saved map with this name.")
 		print(f'{Icons.info}Create a new map with "python main.py -n <mapName> <x> <y>"')
 		return(False)
@@ -48,9 +48,9 @@ def arg(): # Fonction d'entrée des arguments
 		print(" Launch: python main.py <arg>\n")
 		print(" Arguments:")
 
-		for i in range(0, len(args["prefix"])):
+		for i in range(len(args["prefix"])):
 			_p = f'{args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}'
-			print(f' {_p}{" "*(44-len(_p))}{args["descriptions"][i]}')
+			print(f' {_p:<{44}}{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.3 - Florian Cardinal\n")
@@ -144,7 +144,7 @@ def arg(): # Fonction d'entrée des arguments
 
 	return(True)
 
-def main(): # Fonction principale de l'execution du programme
+def main() -> bool: # Fonction principale de l'execution du programme
 	map = Map(str(input(f"Enter a map name to load: {Colors.green}")))
 	print(Colors.end)
 
@@ -154,13 +154,13 @@ def main(): # Fonction principale de l'execution du programme
 
 		while("size" not in locals()):
 			try:
-				size = {
+				size = dict[str, int]({
 					'x': int(input("Height <x> (> 5): ")),
 					'y': int(input("Width <y> (> 5): "))
-				}
+				})
 
 				if((size["x"] < 5) or (size["y"] < 5)):
-					del size
+					del(size)
 					print(f"{Icons.warn}Values must be greater than 5")
 
 			except(Exception):
@@ -172,5 +172,5 @@ def main(): # Fonction principale de l'execution du programme
 
 	return(True)
 
-if __name__ == "__main__":
+if(__name__ == "__main__"):
 	arg() if(len(argv) > 1) else main()

@@ -29,7 +29,7 @@ match(SYSTEM):
 
 			try:
 				tty.setcbreak(fd)
-				rlist, _, _ = select([fd], [], [], timeout)
+				rlist, _, _ = select([ fd ], [], [], timeout)
 
 				if(rlist):
 					ch = stdin.read(1)
@@ -44,23 +44,23 @@ from core import B64, CMD_CLEAR, Colors
 from core.loader import Loader
 
 class Map:
-	def __init__(self, mapName = "world"): # Fichier de chargement par défaut: "data.json"
-		self.__path		= str(f"{dirname(abspath(__file__))}/../saves/{str(mapName)}.map")
-		self.__dims		= tuple((0, 0))
-		self.__cells	= int(self.__dims[0]*self.__dims[1])
-		self.__map		= list([])
-		self.__iter		= int(0)
-		self.__sleep	= float(.03)
-		self.mapName	= str(mapName)
-		self.loaded		= bool(self.__loadJSON())
-		self.helper		= bool(True)
-		self.stats		= bool(True)
+	def __init__(self, mapName: str = "world"): # Fichier de chargement par défaut: "data.json"
+		self.__path			= abspath(f"{dirname(__file__)}/../saves/{str(mapName)}.map")
+		self.__dims			= tuple[int]((0, 0))
+		self.__cells		= int(self.__dims[0]*self.__dims[1])
+		self.__map			= list[list[int]]([])
+		self.__iterations	= int(0)
+		self.__sleep		= float(.03)
+		self.mapName		= str(mapName)
+		self.loaded			= bool(self.__loadJSON())
+		self.helper			= bool(True)
+		self.stats			= bool(True)
 
 	def __loadJSON(self) -> bool: # Chargement depuis un fichier
 		try:
 			with open(self.__path, "rb") as outFile:
-				self.__map		= list(Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"]))
-				self.__dims		= tuple((len(self.__map), len(self.__map[0])))
+				self.__map		= list[list[int]](Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"]))
+				self.__dims		= tuple[int]((len(self.__map), len(self.__map[0])))
 				self.__cells	= int(self.__dims[1]*self.__dims[0])
 
 			return(True)
@@ -95,11 +95,7 @@ class Map:
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
 	def __makeMap(self, dims = (20, 20)) -> list[list[int]]:
-		map = []
-		for i in range(0, int(dims[0])):
-			map.append([])
-			for j in range(0, int(dims[1])):
-				map[i].append(0)
+		map = list[list[int]]([[ 0 for _ in range(int(dims[1])) ] for _ in range(int(dims[0])) ])
 
 		return(map)
 
@@ -111,17 +107,12 @@ class Map:
 		input("Press enter to continue ...")
 		shell(CMD_CLEAR)
 
-	def __update(self): # Mise à jour de la map
+	def __update(self) -> None: # Mise à jour de la map
 		map = self.__makeMap(self.__dims)
 
-		for x in range(0, self.__dims[0]-1):
-			for y in range(0, self.__dims[1]-1):
-				active = 0
-
-				for i in range(-1, 2):
-					for j in range(-1, 2):
-						active += self.__map[x+i][y+j] if((i != 0) or (j != 0)) else 0
-
+		for x in range(self.__dims[0]-1):
+			for y in range(self.__dims[1]-1):
+				active = sum([ self.__map[x+i][y+j] if((i != 0) or (j != 0)) else 0 for j in range(-1, 2) for i in range(-1, 2) ])
 				map[x][y] = 1 if((active == 3) or (self.__map[x][y] and (active == 2))) else 0
 
 		self.__map = map
@@ -134,28 +125,24 @@ class Map:
 
 	def display(self) -> bool: # Affichage de la map avec/sans les statistiques
 		if(bool(self.stats)): # Initialisation & Mise à jours des statistiques
-			active = 0
-
-			for cells in self.__map:
-				for cell in cells:
-					active += cell
+			active = sum([ sum(cells) for cells in self.__map ])
 
 			_ = int(12)
 			stats = (
-				f"{'Name':<{_}}: {self.mapName}{' '*2}",
+				f"{'Name':<{_}}: {self.mapName:<{len(self.mapName)+1}}",
 				f"{'Dimensions':<{_}}: {self.__dims[0]}x{self.__dims[1]}",
-				f"{'Iterations':<{_}}: {self.__iter}",
-				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/2)) else Colors.red}{active:<{5}}{Colors.end}",
-				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} sec",
+				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+1}}",
+				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/2)) else Colors.red}{active:<{len(str(active))+1}}{Colors.end}",
+				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} {'sec':<{4}}",
 			)
 
 		if(bool(self.helper)):
 			_ = int(12)
 			help = (
-				f"{Colors.yellow}{'Space':<{_}}{Colors.end}: Pause/Resume",
-				f"{Colors.yellow}{'Up/Down':<{_}}{Colors.end}: Speed up/Slow down",
-				f"{Colors.red}{'Esc':<{_}}{Colors.end}: Exit",
-			)
+				f"{Colors.yellow}{'Space':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
+				f"{Colors.yellow}{'Up/Down':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}",
+				f"{Colors.red}{'Esc':<{_}}{Colors.end}: {'Exit':<{5}}",
+			)[::-1]
 
 		for i, line in enumerate(self.__map):
 			row = ""
@@ -166,7 +153,7 @@ class Map:
 				row += f" {stats[i]}"
 
 			if(bool(self.helper) and (self.__dims[0]-i-1 < len(help))): # Affichage de l'aide
-				row += f" {help[::-1][self.__dims[0]-i-1]}"
+				row += f" {help[self.__dims[0]-i-1]}"
 
 			print(row)
 
@@ -180,8 +167,8 @@ class Map:
 		return(self.__saveJSON())
 
 	def reset(self) -> bool: # Reset complet de toute la map
-		for i in range(0, self.__dims[0]):
-			for j in range(0, self.__dims[1]):
+		for i in range(self.__dims[0]):
+			for j in range(self.__dims[1]):
 				self.__map[i][j] = 0
 
 		return(self.__saveJSON())
@@ -189,13 +176,13 @@ class Map:
 	def start(self) -> bool: # Lancement du jeu
 		if(SYSTEM == "Windows"):
 			_keyPressed	= [ False ]
-			_hook	= on_press(lambda e:self.__onKeyPress(_keyPressed))
+			_hook		= on_press(lambda e:self.__onKeyPress(_keyPressed))
 
 		shell(CMD_CLEAR)
 
 		try:
 			while(True):
-				self.__iter += 1
+				self.__iterations += 1
 
 				print("\x1b[A"*self.__dims[0], end="\r")
 				self.__update()
@@ -209,6 +196,7 @@ class Map:
 							self.__pause()
 
 						if(is_pressed("esc") or is_pressed("q")):
+							_hook()
 							raise(KeyboardInterrupt)
 
 						if(is_pressed("up") or is_pressed("u")):
