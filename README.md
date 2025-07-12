@@ -6,16 +6,18 @@ Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https:
 
 ## Sommaire
 
-1. [Consignes](#consignes)
-2. [Pré-requis](#pré-requis)
-   - [Dépendances](#dépendances)
-3. [Utilisations](#utilisations)
-4. [Sauvegarde](#sauvegarde)
-   - [Les entités](#les-entités)
-5. [Exemples d'utilisations](#exemples-dutilisations)
-   - [Aperçu](#aperçu)
-   - [Remarque](#remarque)
-6. [Licence](#licence)
+- [**conwayGameOfLife**](#conwaygameoflife)
+  - [Sommaire](#sommaire)
+  - [Consignes](#consignes)
+  - [Pré-requis](#pré-requis)
+    - [Dépendances](#dépendances)
+  - [Utilisations](#utilisations)
+  - [Sauvegarde](#sauvegarde)
+    - [Les entités](#les-entités)
+  - [Exemples d'utilisations](#exemples-dutilisations)
+    - [Aperçu](#aperçu)
+    - [Remarque](#remarque)
+  - [Licence](#licence)
 
 ## Consignes
 
@@ -27,13 +29,17 @@ La liste des consignes du sujet est disponible dans le [todo.md](todo.md)
 
 L'installation de **[Python 3](https://www.python.org/downloads/)** est recommandé pour l'éxécution du script
 
+> [!Note]
+> Une fois l'installation de **[Python 3](https://www.python.org/downloads/)** terminée, tapez `$ pip install -r requirements.txt` dans un terminal à la racine du projets pour installer toutes les dépendances du projet
+
 [Sommaire](#sommaire)
 
 ### Dépendances
 
 - [base64.b64decode](https://docs.python.org/3/library/base64.html#base64.b64decode), [base64.b64encode](https://docs.python.org/3/library/base64.html#base64.b64encode)
 - [json.dumps](https://docs.python.org/3/library/json.html#json.dumps), [json.loads](https://docs.python.org/3/library/json.html#json.loads)
-- [os.system](https://docs.python.org/3/library/os.html#os.system)
+- [keyboard](https://pypi.org/project/keyboard/)
+- [os.listdir](https://docs.python.org/3/library/os.html#os.listdir), [os.path](https://docs.python.org/3/library/os.path.html), [os.system](https://docs.python.org/3/library/os.html#os.system)
 - [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv), [sys.version_info](https://docs.python.org/3/library/sys.html#sys.version_info)
 - [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
 - [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)

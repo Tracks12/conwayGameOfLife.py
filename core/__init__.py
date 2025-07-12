@@ -4,10 +4,11 @@
 from base64 import b64decode, b64encode
 from platform import system
 
-CMD_CLEAR = "clear" if(system() == "Linux") else "cls" # Commande de nettoyage de la console
+SYSTEM = system()
+CMD_CLEAR = "clear" if(SYSTEM == "Linux") else "cls" # Commande de nettoyage de la console
 
 class Colors: # Module de coloration pour les système Linux/Unix
-	if(system() == "Linux"):
+	if(SYSTEM == "Linux"):
 		bold	= "\033[1m"
 		italic	= "\033[3m"
 
@@ -33,7 +34,7 @@ class Icons: # Module d'icône ascii
 
 	# Icônes de chargement
 	succ	= f" [{Colors.bold}{Colors.green}*{Colors.end}] "
-	fail	= f" [{Colors.bold}{Colors.red}*{Colors.end}] "
+	fail	= f" [{Colors.bold}{Colors.red}x{Colors.end}] "
 
 class B64: # Encode/Decode ascii string in base64
 	def encode(str = ""):
