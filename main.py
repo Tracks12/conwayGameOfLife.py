@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from os import system as shell
+from os import listdir, system as shell
+from os.path import abspath, dirname
 from sys import argv, version_info
 
 # Importation des dépendances internes
@@ -26,6 +27,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
 			(("-d", "--display"), "<mapName>"),
 			(("-n", "--new"), "<mapName> <x> <y>"),
+			(("-l", "--list"), ""),
 			(("-r", "--reset"), "<mapName>"),
 			(("-s", "--start"), "<mapName>"),
 			(("-h", "--help"), ""),
@@ -36,6 +38,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			"Insert an entity",
 			"Display the saved map",
 			"Create a new map",
+			"List all saved map",
 			"Reset a map",
 			"Play a map\n",
 			"Display the help menu",
@@ -55,9 +58,19 @@ def arg() -> bool: # Fonction d'entrée des arguments
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.3 - Florian Cardinal\n")
 
+	elif(argv[1] in args["prefix"][4][0]):
+		saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
+
+		output = [ "Saved map:\n" ]
+		for i, save in enumerate(saves, 1):
+			output.append(f" {' '*(2-len(str(i)))}{i}. {save}")
+
+		print("\n".join(output), end="\n"*2)
+
 	if(
 		not (argv[1] in args["prefix"][-2][0])
 		and not (argv[1] in args["prefix"][-1][0])
+		and not (argv[1] in args["prefix"][4][0])
 	):
 		try:
 			map = Map(str(argv[2]))
@@ -126,7 +139,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 				print(f"{Icons.warn}Specify the <x> and <y> dimensions")
 				return(False)
 
-		elif(argv[1] in args["prefix"][4][0]):
+		elif(argv[1] in args["prefix"][5][0]):
 			if(map.loaded):
 				map.reset()
 				shell(CMD_CLEAR)
@@ -135,7 +148,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			else:
 				return(errMsg())
 
-		elif(argv[1] in args["prefix"][5][0]):
+		elif(argv[1] in args["prefix"][6][0]):
 			if(map.loaded):
 				map.start()
 
@@ -145,6 +158,14 @@ def arg() -> bool: # Fonction d'entrée des arguments
 	return(True)
 
 def main() -> bool: # Fonction principale de l'execution du programme
+	saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
+
+	output = [ "Saved map:\n" ]
+	for i, save in enumerate(saves, 1):
+		output.append(f" {' '*(2-len(str(i)))}{i}. {save}")
+
+	print("\n".join(output), end="\n"*2)
+
 	map = Map(str(input(f"Enter a map name to load: {Colors.green}")))
 	print(Colors.end)
 

@@ -50,7 +50,7 @@ class Map:
 		self.__cells		= int(self.__dims[0]*self.__dims[1])
 		self.__map			= list[list[int]]([])
 		self.__iterations	= int(0)
-		self.__sleep		= float(.03)
+		self.__sleep		= float(.0625)
 		self.mapName		= str(mapName)
 		self.loaded			= bool(self.__loadJSON())
 		self.helper			= bool(True)
@@ -79,7 +79,8 @@ class Map:
 			return(False)
 
 	def __decreaseSpeed(self) -> None:
-		self.__sleep *= 2
+		if(self.__sleep < 2):
+			self.__sleep *= 2
 
 	def __increaseSpeed(self) -> None:
 		if(self.__sleep > .001):
@@ -117,7 +118,7 @@ class Map:
 
 		self.__map = map
 
-	def addCells(self, cells) -> bool: # Ajout de cellule(s) active(s)
+	def addCells(self, cells: list[tuple[int]]) -> bool: # Ajout de cellule(s) active(s)
 		for cell in cells:
 			self.__map[int(cell[0])-1][int(cell[1])-1] = 1
 
@@ -139,15 +140,13 @@ class Map:
 		if(bool(self.helper)):
 			_ = int(12)
 			help = (
-				f"{Colors.yellow}{'Space':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
-				f"{Colors.yellow}{'Up/Down':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}",
-				f"{Colors.red}{'Esc':<{_}}{Colors.end}: {'Exit':<{5}}",
-			)[::-1]
+				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
+				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
+				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}"
+			)
 
 		for i, line in enumerate(self.__map):
-			row = ""
-			for value in line:
-				row += f'{f"{Colors.green}O" if(value) else f"{Colors.cyan}."}{Colors.end} '
+			row = "".join([ f"{f'{Colors.green}O' if(v) else f'{Colors.cyan}.'}{Colors.end} " for v in line ])
 
 			if(bool(self.stats) and (i < len(stats))): # Affichage des statistiques
 				row += f" {stats[i]}"
@@ -159,9 +158,9 @@ class Map:
 
 		return(True)
 
-	def initMap(self, x, y) -> bool: # Initialisation de la map dans l'objet
-		self.__map		= list(self.__makeMap((int(x), int(y))))
-		self.__dims		= tuple((int(x), int(y)))
+	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
+		self.__map		= list[list[int]](self.__makeMap((int(x), int(y))))
+		self.__dims		= tuple[int]((int(x), int(y)))
 		self.__cells	= int(self.__dims[0]*self.__dims[1])
 
 		return(self.__saveJSON())
@@ -176,7 +175,7 @@ class Map:
 	def start(self) -> bool: # Lancement du jeu
 		if(SYSTEM == "Windows"):
 			_keyPressed	= [ False ]
-			_hook		= on_press(lambda e:self.__onKeyPress(_keyPressed))
+			_hook		= on_press(lambda _:self.__onKeyPress(_keyPressed))
 
 		shell(CMD_CLEAR)
 
@@ -224,7 +223,7 @@ class Map:
 							self.__decreaseSpeed()
 
 		except(KeyboardInterrupt):
-			self.__label(f"STOP", Colors.red)
+			self.__label(f"STOPPED", Colors.red)
 
 			if(self.__saveJSON()):
 				print(f"{Icons.succ}{self.mapName.capitalize()}{' saved !':<{self.__dims[1]-len(self.mapName)}}")
