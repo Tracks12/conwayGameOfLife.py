@@ -8,7 +8,6 @@
 from json import dumps
 from os import system as shell
 from os.path import abspath, dirname
-from platform import system
 from zlib import compress
 
 from core import SYSTEM, Icons
@@ -111,9 +110,12 @@ class Map:
 	def __update(self) -> None: # Mise à jour de la map
 		map = self.__makeMap(self.__dims)
 
-		for x in range(self.__dims[0]-1):
-			for y in range(self.__dims[1]-1):
-				active = sum([ self.__map[x+i][y+j] if((i != 0) or (j != 0)) else 0 for j in range(-1, 2) for i in range(-1, 2) ])
+		for x in range(self.__dims[0]):
+			x = -1 if(x == self.__dims[0]-1) else x
+			for y in range(self.__dims[1]):
+				y = -1 if(y == self.__dims[1]-1) else y
+
+				active = sum([ self.__map[x+i][y+j] if(i or j) else 0 for i in range(-1, 2) for j in range(-1, 2) ])
 				map[x][y] = 1 if((active == 3) or (self.__map[x][y] and (active == 2))) else 0
 
 		self.__map = map
