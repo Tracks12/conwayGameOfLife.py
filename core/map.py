@@ -5,6 +5,7 @@
 # ce module contient les fonctionnalités de sauvegarde et de chargement de la map
 # ainsi que la mise à jour de celle-ci
 
+from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import system as shell
 from os.path import abspath, dirname
@@ -108,17 +109,30 @@ class Map:
 		shell(CMD_CLEAR)
 
 	def __update(self) -> None: # Mise à jour de la map
-		map = self.__makeMap(self.__dims)
+		def compute_row(x: int) -> list[int]:
+			row = list[int]([])
 
-		for x in range(self.__dims[0]):
-			x = -1 if(x == self.__dims[0]-1) else x
 			for y in range(self.__dims[1]):
-				y = -1 if(y == self.__dims[1]-1) else y
+				xm1, xp1 = (x - 1) % self.__dims[0], (x + 1) % self.__dims[0]
+				ym1, yp1 = (y - 1) % self.__dims[1], (y + 1) % self.__dims[1]
 
-				active = sum([ self.__map[x+i][y+j] if(i or j) else 0 for i in range(-1, 2) for j in range(-1, 2) ])
-				map[x][y] = 1 if((active == 3) or (self.__map[x][y] and (active == 2))) else 0
+				active = sum([
+					self.__map[xm1][ym1],
+					self.__map[xm1][y],
+					self.__map[xm1][yp1],
+					self.__map[x][ym1],
+					self.__map[x][yp1],
+					self.__map[xp1][ym1],
+					self.__map[xp1][y],
+					self.__map[xp1][yp1]
+				])
 
-		self.__map = map
+				row.append(1 if (active == 3 or (self.__map[x][y] and active == 2)) else 0)
+
+			return(row)
+
+		with ThreadPoolExecutor() as executor:
+			self.__map = list(executor.map(compute_row, range(self.__dims[0])))
 
 	def addCells(self, cells: list[tuple[int]]) -> bool: # Ajout de cellule(s) active(s)
 		for cell in cells:
