@@ -1,24 +1,24 @@
-#!/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from os import system as shell
+from os import listdir, system as shell
+from os.path import abspath, dirname
 from sys import argv, version_info
 
 # Importation des dépendances internes
 from core import CMD_CLEAR, Colors, Icons
 
 if(version_info.major < 3): # Vérification de l'éxecution du script avec Python3
-	print("{}Le programme doit être lancer avec Python 3".format(Icons.warn))
+	print("{}The program must be launched with Python 3".format(Icons.warn))
 	exit()
 
 from core.entity import Entity
 from core.map import Map
 
-def arg(): # Fonction d'entrée des arguments
-	def errMsg():
-		print(f"{Icons.warn}Il y a pas de map sauvegardée portant ce nom")
-		print(f'{Icons.info}Créer une nouvelle map avec "python main.py -n <mapName> <x> <y>"')
-
+def arg() -> bool: # Fonction d'entrée des arguments
+	def errMsg() -> bool:
+		print(f"{Icons.warn}There is no saved map with this name.")
+		print(f'{Icons.info}Create a new map with "python main.py -n <mapName> <x> <y>"')
 		return(False)
 
 	args = {
@@ -26,6 +26,7 @@ def arg(): # Fonction d'entrée des arguments
 			(("-a", "--add"), '<mapName> "[(x, y), ...]"'),
 			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
 			(("-d", "--display"), "<mapName>"),
+			(("-l", "--list"), ""),
 			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-r", "--reset"), "<mapName>"),
 			(("-s", "--start"), "<mapName>"),
@@ -33,39 +34,49 @@ def arg(): # Fonction d'entrée des arguments
 			(("-v", "--version"), "")
 		),
 		"descriptions": (
-			"Insérer une ou plusieurs cellules",
-			"Insérer une entité",
-			"Afficher la map enregistrée",
-			"Créer une nouvelle map",
-			"Réinitialiser une map",
-			"Jouer une map\n",
-			"Affichage du menu d'aide",
-			"Affichage de la version du programme\n"
+			"Insert one or more cells",
+			"Insert an entity",
+			"Display the saved map",
+			"List all saved map",
+			"Create a new map",
+			"Reset a map",
+			"Play a map\n",
+			"Display the help menu",
+			"Display the program version\n"
 		)
 	}
 
 	if(argv[1] in args["prefix"][-2][0]):
-		print(" Le jeu de la vie de John Horton Conway")
-		print(" Lancement: python main.py <arg>\n")
+		print(" The Game of Life by John Horton Conway")
+		print(" Launch: python main.py <arg>\n")
 		print(" Arguments:")
 
-		for i in range(0, len(args["prefix"])):
+		for i in range(len(args["prefix"])):
 			_p = f'{args["prefix"][i][0][0]}, {args["prefix"][i][0][1]} {args["prefix"][i][1]}'
-			print(f' {_p}{" "*(44-len(_p))}{args["descriptions"][i]}')
+			print(f' {_p:<{44}}{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 2.2 - Florian Cardinal\n")
+		print(" conwayGameOfLife.py 2.3 - Florian Cardinal\n")
+
+	elif(argv[1] in args["prefix"][3][0]):
+		saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
+
+		output = [ "Saved map:\n" ]
+		for i, save in enumerate(saves, 1):
+			output.append(f" {' '*(2-len(str(i)))}{i}. {save}")
+
+		print("\n".join(output), end="\n"*2)
 
 	if(
 		not (argv[1] in args["prefix"][-2][0])
 		and not (argv[1] in args["prefix"][-1][0])
+		and not (argv[1] in args["prefix"][3][0])
 	):
 		try:
 			map = Map(str(argv[2]))
 
 		except(Exception):
-			print(f"{Icons.warn}Aucun nom de map n'a été entrer")
-
+			print(f"{Icons.warn}No map name has been entered")
 			return(False)
 
 		if(argv[1] in args["prefix"][0][0]):
@@ -76,8 +87,7 @@ def arg(): # Fonction d'entrée des arguments
 					map.display()
 
 				except(Exception):
-					print(f"{Icons.warn}Coordonnées manquantes ou incorrectes")
-
+					print(f"{Icons.warn}Missing or incorrect contact information")
 					return(False)
 
 			else:
@@ -92,8 +102,7 @@ def arg(): # Fonction d'entrée des arguments
 					y = int(argv[5])
 
 				except(Exception):
-					print(f"{Icons.warn}Les coordonnées de position sont incorrectes")
-
+					print(f"{Icons.warn}The position coordinates are incorrect")
 					return(False)
 
 				if(entities.loaded):
@@ -103,11 +112,10 @@ def arg(): # Fonction d'entrée des arguments
 						map.display()
 
 					else:
-						print(f"{Icons.warn}Entitée non reconnue")
+						print(f"{Icons.warn}Unrecognized entity")
 
 				else:
-					print(f"{Icons.warn}Le fichier d'entités est introuvables")
-
+					print(f"{Icons.warn}The entity file could not be found")
 					return(False)
 
 			else:
@@ -121,18 +129,17 @@ def arg(): # Fonction d'entrée des arguments
 			else:
 				return(errMsg())
 
-		elif(argv[1] in args["prefix"][3][0]):
+		elif(argv[1] in args["prefix"][4][0]):
 			try:
 				map.initMap(int(argv[3]), int(argv[4]))
 				shell(CMD_CLEAR)
 				map.display()
 
 			except(Exception):
-				print(f"{Icons.warn}Spécifier les dimension <x> et <y>")
-
+				print(f"{Icons.warn}Specify the <x> and <y> dimensions")
 				return(False)
 
-		elif(argv[1] in args["prefix"][4][0]):
+		elif(argv[1] in args["prefix"][5][0]):
 			if(map.loaded):
 				map.reset()
 				shell(CMD_CLEAR)
@@ -141,7 +148,7 @@ def arg(): # Fonction d'entrée des arguments
 			else:
 				return(errMsg())
 
-		elif(argv[1] in args["prefix"][5][0]):
+		elif(argv[1] in args["prefix"][6][0]):
 			if(map.loaded):
 				map.start()
 
@@ -150,27 +157,35 @@ def arg(): # Fonction d'entrée des arguments
 
 	return(True)
 
-def main(): # Fonction principale de l'execution du programme
-	map = Map(str(input(f"Entrer un nom de map à charger: {Colors.green}")))
+def main() -> bool: # Fonction principale de l'execution du programme
+	saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
+
+	output = [ "Saved map:\n" ]
+	for i, save in enumerate(saves, 1):
+		output.append(f" {' '*(2-len(str(i)))}{i}. {save}")
+
+	print("\n".join(output), end="\n"*2)
+
+	map = Map(str(input(f"Enter a map name to load: {Colors.green}")))
 	print(Colors.end)
 
 	if(not map.loaded):
-		print(f"{Icons.warn}Il y a pas de map sauvegardée portant ce nom")
-		print(f"{Icons.info}Création d'une nouvelle map ...")
+		print(f"{Icons.warn}There is no saved map with this name")
+		print(f"{Icons.info}Creating a new map ...")
 
 		while("size" not in locals()):
 			try:
-				size = {
-					'x': int(input("Hauteur <x> (> 5): ")),
-					'y': int(input("Largeur <y> (> 5): "))
-				}
+				size = dict[str, int]({
+					'x': int(input("Height <x> (> 5): ")),
+					'y': int(input("Width <y> (> 5): "))
+				})
 
 				if((size["x"] < 5) or (size["y"] < 5)):
-					del size
-					print(f"{Icons.warn}Les valeurs doivent être supérieur à 5")
+					del(size)
+					print(f"{Icons.warn}Values must be greater than 5")
 
 			except(Exception):
-				print(f"{Icons.warn}Les valeurs doivent être des entiers supérieur à 5")
+				print(f"{Icons.warn}Values must be integers greater than 5")
 
 		map.initMap(int(size["x"]), int(size["y"]))
 
@@ -178,5 +193,5 @@ def main(): # Fonction principale de l'execution du programme
 
 	return(True)
 
-if __name__ == "__main__":
+if(__name__ == "__main__"):
 	arg() if(len(argv) > 1) else main()

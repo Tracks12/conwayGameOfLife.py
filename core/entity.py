@@ -4,28 +4,32 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
+from os import listdir
 from os.path import abspath, dirname
 
 from core.loader import Loader
 
 class Entity:
 	def __init__(self):
-		self.__path		= str(f"{dirname(abspath(__file__))}/../entity.json")
-		self.__entities	= dict({})
+		self.__path		= str(f"{abspath(dirname(__file__))}/../entities")
+		self.__entities	= dict[str, str]({})
 		self.loaded		= bool(self.__loadJSON())
 
-	def __loadJSON(self): # Chargement des entités depuis un fichier
+	def __loadJSON(self) -> bool: # Chargement des entités depuis le dossier "entities"
 		try:
-			with open(self.__path, 'r') as outFile:
-				self.__entities = dict(Loader.json(outFile, ["Loading entities ...", "Entities loaded !   ", "Entities loading Failed !"]))
+			print("Loading entities ...")
+			for entity in [ e.split(".")[0] for e in listdir(self.__path) ]:
+				with open(f"{self.__path}/{entity}.json", 'r') as outFile:
+					self.__entities[entity] = Loader.json(outFile, [f"Loading {entity} ...", f"{entity} loaded !   ", f"{entity} loading Failed !"])[entity]
 
+			print("Entities loaded !")
 			return(True)
 
 		except(Exception):
 			return(False)
 
-	def __build(self, coord): # Build with relative position
-		entities = dict(self.__entities)
+	def __build(self, coord: tuple[int]) -> dict[str, str]: # Build with relative position
+		entities = dict[str, str](self.__entities)
 
 		for name in entities:
 			entities[name]	= str(entities[name].replace("x", str(coord[0])))
@@ -34,13 +38,8 @@ class Entity:
 
 		return(entities)
 
-	def getEntitiesName(self):
-		names = []
+	def getEntitiesName(self) -> list[str]:
+		return([ str(e) for e in self.__entities ])
 
-		for name in self.__entities:
-			names.append(str(name))
-
-		return(names)
-
-	def get(self, name, coord = (5, 5)): # Récupération d'une
+	def get(self, name: str, coord: tuple[int] = (5, 5)) -> str: # Récupération d'une entité
 		return(self.__build(coord)[name])

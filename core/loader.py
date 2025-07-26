@@ -8,12 +8,12 @@ from zlib import decompress
 from core import B64, Colors, Icons
 
 class Loader: # Module de chargements
-	def anim(msg):
+	def anim(msg: str):
 		arr = ['\\', '|', '/', '-']
 
-		for i in range(0, 10):
+		for i in range(10):
 			print(f" [{Colors.bold}{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
-			sleep(.05)
+			sleep(.005)
 
 	def map(file, msg = ["", "", ""]): # Méthode de chargement pour fichier MAP
 		Loader.anim(msg[0])
