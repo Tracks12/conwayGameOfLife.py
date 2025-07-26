@@ -26,8 +26,8 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			(("-a", "--add"), '<mapName> "[(x, y), ...]"'),
 			(("-A", "--add-entity"), "<mapName> <type> <x> <y>"),
 			(("-d", "--display"), "<mapName>"),
-			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-l", "--list"), ""),
+			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-r", "--reset"), "<mapName>"),
 			(("-s", "--start"), "<mapName>"),
 			(("-h", "--help"), ""),
@@ -37,8 +37,8 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			"Insert one or more cells",
 			"Insert an entity",
 			"Display the saved map",
-			"Create a new map",
 			"List all saved map",
+			"Create a new map",
 			"Reset a map",
 			"Play a map\n",
 			"Display the help menu",
@@ -58,7 +58,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 	elif(argv[1] in args["prefix"][-1][0]):
 		print(" conwayGameOfLife.py 2.3 - Florian Cardinal\n")
 
-	elif(argv[1] in args["prefix"][4][0]):
+	elif(argv[1] in args["prefix"][3][0]):
 		saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
 
 		output = [ "Saved map:\n" ]
@@ -70,7 +70,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 	if(
 		not (argv[1] in args["prefix"][-2][0])
 		and not (argv[1] in args["prefix"][-1][0])
-		and not (argv[1] in args["prefix"][4][0])
+		and not (argv[1] in args["prefix"][3][0])
 	):
 		try:
 			map = Map(str(argv[2]))
@@ -129,7 +129,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			else:
 				return(errMsg())
 
-		elif(argv[1] in args["prefix"][3][0]):
+		elif(argv[1] in args["prefix"][4][0]):
 			try:
 				map.initMap(int(argv[3]), int(argv[4]))
 				shell(CMD_CLEAR)

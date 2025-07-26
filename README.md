@@ -2,7 +2,8 @@
 
 Le jeu de la vie de John Horton Conway
 
-Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)** du jeu de la vie.
+> [!Note]
+> Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)** du jeu de la vie.
 
 ## Sommaire
 
@@ -36,14 +37,16 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ### Dépendances
 
-- [base64.b64decode](https://docs.python.org/3/library/base64.html#base64.b64decode), [base64.b64encode](https://docs.python.org/3/library/base64.html#base64.b64encode)
-- [json.dumps](https://docs.python.org/3/library/json.html#json.dumps), [json.loads](https://docs.python.org/3/library/json.html#json.loads)
-- [keyboard](https://pypi.org/project/keyboard/)
-- [os.listdir](https://docs.python.org/3/library/os.html#os.listdir), [os.path](https://docs.python.org/3/library/os.path.html), [os.system](https://docs.python.org/3/library/os.html#os.system)
-- [sys.argv](https://docs.python.org/3/library/sys.html#sys.argv), [sys.version_info](https://docs.python.org/3/library/sys.html#sys.version_info)
-- [platform.system](https://docs.python.org/3/library/platform.html#platform.system)
-- [time.sleep](https://docs.python.org/3/library/time.html#time.sleep)
-- [zlib.compress](https://docs.python.org/3/library/zlib.html#zlib.compress), [zlib.decompress](https://docs.python.org/3/library/zlib.html#zlib.decompress)
+- [base64](https://docs.python.org/3/library/base64.html)
+- [json](https://docs.python.org/3/library/json.html)
+- [keyboard](https://pypi.org/project/keyboard/) (For Windows system)
+- [os](https://docs.python.org/3/library/os.html)
+- [sys](https://docs.python.org/3/library/sys.html)
+- [platform](https://docs.python.org/3/library/platform.html)
+- [termios](https://docs.python.org/3/library/termios.html) (For Linux system)
+- [tty](https://docs.python.org/3/library/tty.html) (For Linux system)
+- [time](https://docs.python.org/3/library/time.html)
+- [zlib](https://docs.python.org/3/library/zlib.html)
 
 [Sommaire](#sommaire)
 
@@ -52,10 +55,11 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 | Fonctionnalités                     | Commandes                                                                                                    |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Exécuter le script                  | `$ python main.py`                                                                                           |
-| Créer une nouvelle map              | `$ python main.py -n <mapName> <x> <y>`<br />`$ python main.py --new <mapName> <x> <y>`                      |
 | Insérer une ou plusieurs cellule(s) | `$ python main.py -a <mapName> "[(x, y), ...]"`<br />`$ python main.py --add <mapName> "[(x, y), ...]"`      |
 | Insérer une entité                  | `$ python main.py -A <mapName> <type> <x> <y>`<br />`$ python main.py --add-entity <mapName> <type> <x> <y>` |
 | Afficher une map enregistrée        | `$ python main.py -d <mapName>`<br />`$ python main.py --display <mapName>`                                  |
+| Lister les maps sauvegardés         | `$ python main.py -l`<br />`$ python main.py --list`                                                         |
+| Créer une nouvelle map              | `$ python main.py -n <mapName> <x> <y>`<br />`$ python main.py --new <mapName> <x> <y>`                      |
 | Réinitialiser une map               | `$ python main.py -r <mapName>`<br />`$ python main.py --reset <mapName>`                                    |
 | Jouer une map                       | `$ python main.py -s <mapName>`<br />`$ python main.py --start <mapName>`                                    |
 
@@ -63,20 +67,19 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves/](saves/)** (_exemple: **[world.map](saves/world.map)**_)
+Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves](saves/)** (_exemple: **[world.map](saves/world.map)**_)
 
 [Sommaire](#sommaire)
 
 ### Les entités
 
-De même que pour la map, les entités sont stockées dans le fichier **[entity.json](entity.json)**
+De même que pour la map, les entités sont stockées dans le dossier **[entities](entities/)**
 
-Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous:
+Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous pour l'entité "block":
 
 ```json
 {
-  "nom de l'entité": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]",
-  ...
+  "block": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]"
 }
 ```
 
@@ -105,11 +108,12 @@ Et on lance le jeu avec `$ python main.py` en entrant le nom de la map que l'on 
 ### Remarque
 
 - Vous pouvez checker votre configuration avec `$ python main.py -d world` pour afficher la map avec vos cellules actives
-- Depuis la version 2.0, vous pouvez maintenant enregistrer une entité complète dans **[entity.json](entity.json)** et l'ajouter sur la map comme ceci:
+- Depuis la version 2.0, vous pouvez maintenant enregistrer une entité complète dans le dossier **[entities](entities)** et l'ajouter sur la map comme ceci:
   - **Départ de floraison**: `$ python main.py -A world flowering 25 25`
   - **Le clown**: `$ python main.py -A world clown 25 25`
 
-Si vous voulez entièrement la réinitialiser, `$ python main.py -r world` remet toutes les cellules d'une map à 0
+> [!Tip]
+> Si vous voulez entièrement la réinitialiser, `$ python main.py -r world` remet toutes les cellules d'une map à 0
 
 [Sommaire](#sommaire)
 
