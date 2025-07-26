@@ -4,27 +4,28 @@
 from base64 import b64decode, b64encode
 from platform import system
 
+class SystemEnum:
+	LINUX	= "Linux"
+	WINDOWS	= "Windows"
+
 SYSTEM = system()
-CMD_CLEAR = "clear" if(SYSTEM == "Linux") else "cls" # Commande de nettoyage de la console
+_isLinux = bool(SYSTEM == SystemEnum.LINUX)
+
+CMD_CLEAR = "clear" if(_isLinux) else "cls" # Commande de nettoyage de la console
 
 class Colors: # Module de coloration pour les système Linux/Unix
-	if(SYSTEM == "Linux"):
-		bold	= "\033[1m"
-		italic	= "\033[3m"
+	bold	= "\033[1m"		if(_isLinux) else ""
+	italic	= "\033[3m"		if(_isLinux) else ""
 
-		red		= "\033[31m"
-		green	= "\033[32m"
-		yellow	= "\033[33m"
-		blue	= "\033[34m"
-		purple	= "\033[35m"
-		cyan	= "\033[36m"
-		white	= "\033[37m"
+	red		= "\033[31m"	if(_isLinux) else ""
+	green	= "\033[32m"	if(_isLinux) else ""
+	yellow	= "\033[33m"	if(_isLinux) else ""
+	blue	= "\033[34m"	if(_isLinux) else ""
+	purple	= "\033[35m"	if(_isLinux) else ""
+	cyan	= "\033[36m"	if(_isLinux) else ""
+	white	= "\033[37m"	if(_isLinux) else ""
 
-		end		= "\033[0m"
-
-	else:
-		bold = italic = end = ""
-		red = green = yellow = blue = purple = cyan = white = ""
+	end		= "\033[0m"		if(_isLinux) else ""
 
 class Icons: # Module d'icône ascii
 	# Icônes fixes

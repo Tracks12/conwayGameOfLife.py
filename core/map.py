@@ -11,24 +11,25 @@ from os import system as shell
 from os.path import abspath, dirname
 from zlib import compress
 
-from core import SYSTEM, Icons
+from core import SYSTEM, Icons, SystemEnum
 
 match(SYSTEM):
-	case("Windows"):
+	case(SystemEnum.WINDOWS):
 		from keyboard import is_pressed, on_press
 		from time import sleep
 
-	case("Linux"):
+	case(SystemEnum.LINUX):
 		from select import select
 		from sys import stdin
-		import termios, tty
+		from termios import tcgetattr, tcsetattr, TCSADRAIN
+		from tty import setcbreak
 
 		def getch(timeout: float = .01) -> str | None:
 			fd = stdin.fileno()
-			old = termios.tcgetattr(fd)
+			old = tcgetattr(fd)
 
 			try:
-				tty.setcbreak(fd)
+				setcbreak(fd)
 				rlist, _, _ = select([ fd ], [], [], timeout)
 
 				if(rlist):
@@ -36,7 +37,7 @@ match(SYSTEM):
 					return(ch)
 
 			finally:
-				termios.tcsetattr(fd, termios.TCSADRAIN, old)
+				tcsetattr(fd, TCSADRAIN, old)
 
 			return(None)
 
@@ -53,7 +54,7 @@ class Map:
 		self.__sleep		= float(.0625)
 		self.mapName		= str(mapName)
 		self.loaded			= bool(self.__loadJSON())
-		self.helper			= bool(True)
+		self.helper			= bool(False)
 		self.stats			= bool(True)
 
 	def __loadJSON(self) -> bool: # Chargement depuis un fichier
@@ -87,11 +88,13 @@ class Map:
 			self.__sleep /= 2
 
 	def __label(self, text: str, color: Colors = "") -> None:
-		_ = str(' '*int((self.__dims[1]+(self.__dims[1]-1))/2))[int((len(text)-1)/2)-(1 if(len(text)%2) else 0):-4]
+		__dims = (self.__dims[0]/8, self.__dims[1]/3.9)
 
-		print("\x1b[A"*int(self.__dims[0]/2), end="\r")
+		_ = str(' '*int((__dims[1]+(__dims[1]-1))/2))[int((len(text)-1)/2)-(1 if(len(text)%2) else 0):-4]
+
+		print("\x1b[A"*int(__dims[0]), end="\r")
 		print(f"{_} [ {color}{text}{Colors.end} ] {_}{'' if(len(text)%2) else ' '}")
-		print("\x1b[B"*int((self.__dims[0]/2)-1), end="\r")
+		print("\x1b[B"*int((__dims[0])-1), end="\r")
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
@@ -141,19 +144,19 @@ class Map:
 		return(self.__saveJSON())
 
 	def display(self) -> bool: # Affichage de la map avec/sans les statistiques
-		if(bool(self.stats)): # Initialisation & Mise à jours des statistiques
+		if(self.stats): # Initialisation & Mise à jours des statistiques
 			active = sum([ sum(cells) for cells in self.__map ])
 
 			_ = int(12)
 			stats = (
 				f"{'Name':<{_}}: {self.mapName:<{len(self.mapName)+1}}",
 				f"{'Dimensions':<{_}}: {self.__dims[0]}x{self.__dims[1]}",
-				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+1}}",
 				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/2)) else Colors.red}{active:<{len(str(active))+1}}{Colors.end}",
+				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+1}}",
 				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} {'sec':<{4}}",
 			)
 
-		if(bool(self.helper)):
+		if(self.helper):
 			_ = int(12)
 			help = (
 				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
@@ -161,16 +164,43 @@ class Map:
 				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}"
 			)
 
-		for i, line in enumerate(self.__map):
-			row = "".join([ f"{f'{Colors.green}O' if(v) else f'{Colors.cyan}.'}{Colors.end} " for v in line ])
+		braille_map = dict[tuple[int, int], int]({
+			(0, 0): 0, (0, 1): 3,
+			(1, 0): 1, (1, 1): 4,
+			(2, 0): 2, (2, 1): 5,
+			(3, 0): 6, (3, 1): 7,
+		})
 
-			if(bool(self.stats) and (i < len(stats))): # Affichage des statistiques
-				row += f" {stats[i]}"
+		output_lines = list[str]([])
+		for y in range(0, self.__dims[0], 4):
+			lines = list[str]([])
+			for x in range(0, self.__dims[1], 2):
+				braille = int(0)
+				for dy in range(4):
+					for dx in range(2):
+						xx, yy = int(x + dx), int(y + dy)
 
-			if(bool(self.helper) and (self.__dims[0]-i-1 < len(help))): # Affichage de l'aide
-				row += f" {help[self.__dims[0]-i-1]}"
+						if(
+							(yy < self.__dims[0])
+							and (xx < self.__dims[1])
+							and self.__map[yy][xx]
+						):
+							bit = int(braille_map[(dy, dx)])
+							braille |= (1 << bit)
 
-			print(row)
+				char = chr(0x2800 + braille)
+				lines.append(f"{Colors.green if braille else Colors.cyan}{char}{Colors.end}")
+
+			output_lines.append("".join(lines))
+
+		for i in range(len(output_lines)):
+			if(self.stats and (i < len(stats))): # Affichage des statistiques
+				output_lines[i] += f" {stats[i]}"
+
+			if(self.helper and (len(output_lines)-i-1 < len(help))): # Affichage de l'aide
+				output_lines[i] += f" {help[len(output_lines)-i-1]}"
+
+		print("\n".join(output_lines), flush=True)
 
 		return(True)
 
@@ -189,11 +219,12 @@ class Map:
 		return(self.__saveJSON())
 
 	def start(self) -> bool: # Lancement du jeu
-		if(SYSTEM == "Windows"):
+		self.helper = True
+		shell(CMD_CLEAR)
+
+		if(SYSTEM == SystemEnum.WINDOWS):
 			_keyPressed	= [ False ]
 			_hook		= on_press(lambda _:self.__onKeyPress(_keyPressed))
-
-		shell(CMD_CLEAR)
 
 		try:
 			while(True):
@@ -203,7 +234,7 @@ class Map:
 				self.__update()
 				self.display()
 
-				if(SYSTEM == "Windows"):
+				if(SYSTEM == SystemEnum.WINDOWS):
 					if(_keyPressed[0]):
 						_keyPressed[0] = False
 
@@ -222,7 +253,7 @@ class Map:
 
 					sleep(self.__sleep)
 
-				if(SYSTEM == "Linux"):
+				if(SYSTEM == SystemEnum.LINUX):
 					key = getch(self.__sleep)
 
 					if(key is not None):
@@ -244,4 +275,4 @@ class Map:
 			if(self.__saveJSON()):
 				print(f"{Icons.succ}{self.mapName.capitalize()}{' saved !':<{self.__dims[1]-len(self.mapName)}}")
 
-			return(True)
+		return(True)
