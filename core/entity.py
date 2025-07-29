@@ -28,7 +28,7 @@ class Entity:
 		except(Exception):
 			return(False)
 
-	def __build(self, coord: tuple[int]) -> dict[str, str]: # Build with relative position
+	def __build(self, coord: tuple[int]) -> dict[str, list[tuple[int]]]: # Build with relative position
 		entities = dict[str, str](self.__entities)
 
 		for name in entities:
@@ -41,5 +41,5 @@ class Entity:
 	def getEntitiesName(self) -> list[str]:
 		return([ str(e) for e in self.__entities ])
 
-	def get(self, name: str, coord: tuple[int] = (5, 5)) -> str: # Récupération d'une entité
+	def get(self, name: str, coord: tuple[int] = (5, 5)) -> list[tuple[int]]: # Récupération d'une entité
 		return(self.__build(coord)[name])

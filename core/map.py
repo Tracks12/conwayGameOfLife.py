@@ -9,9 +9,11 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import system as shell
 from os.path import abspath, dirname
+from random import choice, randrange
 from zlib import compress
 
 from core import SYSTEM, Icons, SystemEnum
+from core.entity import Entity
 
 match(SYSTEM):
 	case(SystemEnum.WINDOWS):
@@ -44,12 +46,21 @@ match(SYSTEM):
 from core import B64, CMD_CLEAR, Colors
 from core.loader import Loader
 
+class Border:
+	ASCII	= [ "+", "+", "+", "+", "-", "|" ]
+	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│" ]
+	DASHED	= [ "┌", "┐", "└", "┘", "╌", "┆" ]
+	DOTTED	= [ "┌", "┐", "└", "┘", "┈", "┊" ]
+	DOUBLE	= [ "╔", "╗", "╚", "╝", "═", "║" ]
+
 class Map:
 	def __init__(self, mapName: str = "world"): # Fichier de chargement par défaut: "data.json"
+		self.__entities		= None
 		self.__path			= abspath(f"{dirname(__file__)}/../saves/{str(mapName)}.map")
 		self.__dims			= tuple[int]((0, 0))
 		self.__cells		= int(self.__dims[0]*self.__dims[1])
 		self.__map			= list[list[int]]([])
+		self.__mapFrame		= Border.SIMPLE
 		self.__iterations	= int(0)
 		self.__sleep		= float(.0625)
 		self.mapName		= str(mapName)
@@ -87,14 +98,26 @@ class Map:
 		if(self.__sleep > .001):
 			self.__sleep /= 2
 
+	def __addRandomEntity(self) -> None:
+		if(self.__entities.loaded):
+			name		= choice(self.__entities.getEntitiesName())
+			position	= (randrange(self.__dims[0]), randrange(self.__dims[1]))
+			entity		= self.__entities.get(name, position)
+
+			try:
+				self.addCells(entity)
+				print(f"{Icons.succ}Entity '{name}' added at {position} !{'':<{self.__dims[1]-len(name)-len(str(position))}}")
+			
+			except(IndexError):
+				pass
+
 	def __label(self, text: str, color: Colors = "") -> None:
-		__dims = (self.__dims[0]/8, self.__dims[1]/3.9)
+		__dims	= tuple[float]((self.__dims[0]/8, self.__dims[1]/2))
+		_		= str(" "*int(__dims[1]/2))[int((len(text)+2)/2):-1]
 
-		_ = str(' '*int((__dims[1]+(__dims[1]-1))/2))[int((len(text)-1)/2)-(1 if(len(text)%2) else 0):-4]
-
-		print("\x1b[A"*int(__dims[0]), end="\r")
-		print(f"{_} [ {color}{text}{Colors.end} ] {_}{'' if(len(text)%2) else ' '}")
-		print("\x1b[B"*int((__dims[0])-1), end="\r")
+		print("\x1b[A"*int(__dims[0]+2), end="\r")
+		print(f"{self.__mapFrame[5]}{_}[ {color}{text}{Colors.end} ]{_[:-1]}")
+		print("\x1b[B"*int(__dims[0]+1), end="\r")
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
@@ -108,7 +131,7 @@ class Map:
 
 	def __pause(self) -> None:
 		self.__label("PAUSED", Colors.yellow)
-		input("Press enter to continue ...")
+		input(f"{'Press enter to continue ...':<{int(self.__dims[1]/2)}}")
 		shell(CMD_CLEAR)
 
 	def __update(self) -> None: # Mise à jour de la map
@@ -160,6 +183,8 @@ class Map:
 			_ = int(12)
 			help = (
 				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
+				f"{Colors.yellow}{'R':<{_}}{Colors.end}: {'Reset':<{13}}",
+				f"{Colors.yellow}{'A':<{_}}{Colors.end}: {'Add random entity':<{13}}",
 				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
 				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}"
 			)
@@ -171,7 +196,7 @@ class Map:
 			(3, 0): 6, (3, 1): 7,
 		})
 
-		output_lines = list[str]([])
+		output_lines = [ f"{self.__mapFrame[0]}{self.__mapFrame[4]*len([ n for n in range(0, self.__dims[1], 2) ])}{self.__mapFrame[1]}" ]
 		for y in range(0, self.__dims[0], 4):
 			lines = list[str]([])
 			for x in range(0, self.__dims[1], 2):
@@ -191,7 +216,9 @@ class Map:
 				char = chr(0x2800 + braille)
 				lines.append(f"{Colors.green if braille else Colors.cyan}{char}{Colors.end}")
 
-			output_lines.append("".join(lines))
+			output_lines.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
+
+		output_lines.append(f"{self.__mapFrame[2]}{self.__mapFrame[4]*len([ n for n in range(0, self.__dims[1], 2) ])}{self.__mapFrame[3]}")
 
 		for i in range(len(output_lines)):
 			if(self.stats and (i < len(stats))): # Affichage des statistiques
@@ -216,9 +243,11 @@ class Map:
 			for j in range(self.__dims[1]):
 				self.__map[i][j] = 0
 
+		print(f"{Icons.succ}Map '{self.mapName}' reset !{'':<{self.__dims[1]-len(self.mapName)}}")
 		return(self.__saveJSON())
 
 	def start(self) -> bool: # Lancement du jeu
+		self.__entities = Entity()
 		self.helper = True
 		shell(CMD_CLEAR)
 
@@ -251,28 +280,40 @@ class Map:
 						if(is_pressed("down") or is_pressed("d")):
 							self.__decreaseSpeed()
 
+						if(is_pressed("r")):
+							self.reset()
+
+						if(is_pressed("a")):
+							self.__addRandomEntity()
+
 					sleep(self.__sleep)
 
 				if(SYSTEM == SystemEnum.LINUX):
 					key = getch(self.__sleep)
 
-					if(key is not None):
-						if(key in (" ", "p")):
+					match(key):
+						case(" " | "p"):
 							self.__pause()
 
-						if(key in ("\x1b", "q")):
+						case("\x1b" | "q"):
 							raise(KeyboardInterrupt)
 
-						if(key == "u"):
+						case("u"):
 							self.__increaseSpeed()
 
-						if(key == "d"):
+						case("d"):
 							self.__decreaseSpeed()
+
+						case("r"):
+							self.reset()
+
+						case("a"):
+							self.__addRandomEntity()
 
 		except(KeyboardInterrupt):
 			self.__label(f"STOPPED", Colors.red)
 
 			if(self.__saveJSON()):
-				print(f"{Icons.succ}{self.mapName.capitalize()}{' saved !':<{self.__dims[1]-len(self.mapName)}}")
+				print(f"{Icons.succ}Map '{self.mapName}' saved !{'':<{self.__dims[1]-len(self.mapName)}}")
 
 		return(True)
