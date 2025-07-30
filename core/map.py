@@ -47,11 +47,12 @@ from core import B64, CMD_CLEAR, Colors
 from core.loader import Loader
 
 class Border:
-	ASCII	= [ "+", "+", "+", "+", "-", "|" ]
-	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│" ]
-	DASHED	= [ "┌", "┐", "└", "┘", "╌", "┆" ]
-	DOTTED	= [ "┌", "┐", "└", "┘", "┈", "┊" ]
-	DOUBLE	= [ "╔", "╗", "╚", "╝", "═", "║" ]
+	ASCII	= [ "+", "+", "+", "+", "-", "|", "+", "+", "+", "+" ]
+	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│", "┌", "┐", "└", "┘" ]
+	SMOOTH	= [ "╭", "╮", "╰", "╯", "─", "│", "┌", "┐", "└", "┘" ]
+	DASHED	= [ "┌", "┐", "└", "┘", "╌", "┆", "┌", "┐", "└", "┘" ]
+	DOTTED	= [ "┌", "┐", "└", "┘", "┈", "┊", "┌", "┐", "└", "┘" ]
+	DOUBLE	= [ "╔", "╗", "╚", "╝", "═", "║", "╔", "╗", "╚", "╝" ]
 
 class Map:
 	def __init__(self, mapName: str = "world"): # Fichier de chargement par défaut: "data.json"
@@ -60,7 +61,7 @@ class Map:
 		self.__dims			= tuple[int]((0, 0))
 		self.__cells		= int(self.__dims[0]*self.__dims[1])
 		self.__map			= list[list[int]]([])
-		self.__mapFrame		= Border.SIMPLE
+		self.__mapFrame		= Border.SMOOTH
 		self.__iterations	= int(0)
 		self.__sleep		= float(.0625)
 		self.mapName		= str(mapName)
@@ -172,8 +173,6 @@ class Map:
 
 			_ = int(12)
 			stats = (
-				f"{'Name':<{_}}: {self.mapName:<{len(self.mapName)+1}}",
-				f"{'Dimensions':<{_}}: {self.__dims[0]}x{self.__dims[1]}",
 				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/2)) else Colors.red}{active:<{len(str(active))+1}}{Colors.end}",
 				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+1}}",
 				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} {'sec':<{4}}",
@@ -182,11 +181,11 @@ class Map:
 		if(self.helper):
 			_ = int(12)
 			help = (
-				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
+				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}" if(SYSTEM == SystemEnum.WINDOWS) else f"{Colors.red}{'Q':<{_}}{Colors.end}: {'Exit':<{5}}",
 				f"{Colors.yellow}{'R':<{_}}{Colors.end}: {'Reset':<{13}}",
 				f"{Colors.yellow}{'A':<{_}}{Colors.end}: {'Add random entity':<{13}}",
 				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
-				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}"
+				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}" if(SYSTEM == SystemEnum.WINDOWS) else f"{Colors.yellow}{'U/D':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}",
 			)
 
 		braille_map = dict[tuple[int, int], int]({
@@ -196,7 +195,12 @@ class Map:
 			(3, 0): 6, (3, 1): 7,
 		})
 
-		output_lines = [ f"{self.__mapFrame[0]}{self.__mapFrame[4]*len([ n for n in range(0, self.__dims[1], 2) ])}{self.__mapFrame[1]}" ]
+		output_lines = [ "".join([
+			self.__mapFrame[0], self.__mapFrame[7],
+			Colors.purple, self.mapName.capitalize(), Colors.end,
+			self.__mapFrame[6], self.__mapFrame[4]*(len([ n for n in range(0, self.__dims[1], 2) ])-len(self.mapName)-2), self.__mapFrame[1],
+		])]
+
 		for y in range(0, self.__dims[0], 4):
 			lines = list[str]([])
 			for x in range(0, self.__dims[1], 2):
@@ -218,7 +222,12 @@ class Map:
 
 			output_lines.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
 
-		output_lines.append(f"{self.__mapFrame[2]}{self.__mapFrame[4]*len([ n for n in range(0, self.__dims[1], 2) ])}{self.__mapFrame[3]}")
+		__dimsOutput = f"{self.__dims[0]}x{self.__dims[1]}"
+		output_lines.append("".join([
+			self.__mapFrame[2], self.__mapFrame[4]*(len([ n for n in range(0, self.__dims[1], 2) ])-len(__dimsOutput)-2), self.__mapFrame[9],
+			Colors.purple, __dimsOutput, Colors.end,
+			self.__mapFrame[8], self.__mapFrame[3]
+		]))
 
 		for i in range(len(output_lines)):
 			if(self.stats and (i < len(stats))): # Affichage des statistiques
@@ -295,7 +304,7 @@ class Map:
 						case(" " | "p"):
 							self.__pause()
 
-						case("\x1b" | "q"):
+						case("q"):
 							raise(KeyboardInterrupt)
 
 						case("u"):
