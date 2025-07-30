@@ -6,10 +6,13 @@
 # ainsi que la mise à jour de celle-ci
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from json import dumps
+from math import prod
 from os import system as shell
 from os.path import abspath, dirname
 from random import choice, randrange
+from time import time
 from zlib import compress
 
 from core import SYSTEM, Icons, SystemEnum
@@ -56,10 +59,12 @@ class Border:
 
 class Map:
 	def __init__(self, mapName: str = "world"): # Fichier de chargement par défaut: "data.json"
+		self.__createdAt	= float(time())
+		self.__lastUpdate	= float(time())
 		self.__entities		= None
 		self.__path			= abspath(f"{dirname(__file__)}/../saves/{str(mapName)}.map")
 		self.__dims			= tuple[int]((0, 0))
-		self.__cells		= int(self.__dims[0]*self.__dims[1])
+		self.__cells		= int(prod(self.__dims))
 		self.__map			= list[list[int]]([])
 		self.__mapFrame		= Border.SMOOTH
 		self.__iterations	= int(0)
@@ -72,9 +77,14 @@ class Map:
 	def __loadJSON(self) -> bool: # Chargement depuis un fichier
 		try:
 			with open(self.__path, "rb") as outFile:
-				self.__map		= list[list[int]](Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"]))
-				self.__dims		= tuple[int]((len(self.__map), len(self.__map[0])))
-				self.__cells	= int(self.__dims[1]*self.__dims[0])
+				__data = Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"])
+
+				self.__createdAt	= float(__data["createdAt"])
+				self.__lastUpdate	= float(__data["lastUpdate"])
+				self.__iterations	= int(__data["iterations"])
+				self.__map			= list[list[int]](__data["map"])
+				self.__dims			= tuple[int]((len(self.__map), len(self.__map[0])))
+				self.__cells		= int(prod(self.__dims))
 
 			return(True)
 
@@ -83,8 +93,15 @@ class Map:
 
 	def __saveJSON(self) -> bool: # Sauvegarde dans un fichier
 		try:
+			self.__lastUpdate = time()
+
 			with open(self.__path, "wb") as inFile:
-				inFile.write(compress(B64.encode(dumps(self.__map))))
+				inFile.write(compress(B64.encode(dumps({
+					"createdAt": self.__createdAt,
+					"lastUpdate": self.__lastUpdate,
+					"iterations": self.__iterations,
+					"map": self.__map
+				}))))
 
 			return(True)
 
@@ -108,7 +125,7 @@ class Map:
 			try:
 				self.addCells(entity)
 				print(f"{Icons.succ}Entity '{name}' added at {position} !{'':<{self.__dims[1]-len(name)-len(str(position))}}")
-			
+
 			except(IndexError):
 				pass
 
@@ -172,16 +189,21 @@ class Map:
 			active = sum([ sum(cells) for cells in self.__map ])
 
 			_ = int(12)
+			createdAt = datetime.fromtimestamp(self.__createdAt).strftime("%Y-%m-%d %H:%M")
+			lastUpdate = datetime.fromtimestamp(self.__lastUpdate).strftime("%Y-%m-%d %H:%M")
 			stats = (
-				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/2)) else Colors.red}{active:<{len(str(active))+1}}{Colors.end}",
-				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+1}}",
+				f"{'Created at':<{_}}: {createdAt:<{len(str(createdAt))+2}}",
+				f"{'Last Update':<{_}}: {lastUpdate:<{len(str(lastUpdate))+2}}",
+				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+2}}",
 				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} {'sec':<{4}}",
+				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{active:<{len(str(active))+4}}{Colors.end}",
+				f"{'Filled':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{round((active/self.__cells)*100, 2)}{Colors.end} {'%':<{4}}",
 			)
 
 		if(self.helper):
 			_ = int(12)
 			help = (
-				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}" if(SYSTEM == SystemEnum.WINDOWS) else f"{Colors.red}{'Q':<{_}}{Colors.end}: {'Exit':<{5}}",
+				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
 				f"{Colors.yellow}{'R':<{_}}{Colors.end}: {'Reset':<{13}}",
 				f"{Colors.yellow}{'A':<{_}}{Colors.end}: {'Add random entity':<{13}}",
 				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
@@ -237,7 +259,6 @@ class Map:
 				output_lines[i] += f" {help[len(output_lines)-i-1]}"
 
 		print("\n".join(output_lines), flush=True)
-
 		return(True)
 
 	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
@@ -248,10 +269,8 @@ class Map:
 		return(self.__saveJSON())
 
 	def reset(self) -> bool: # Reset complet de toute la map
-		for i in range(self.__dims[0]):
-			for j in range(self.__dims[1]):
-				self.__map[i][j] = 0
-
+		self.__iterations = 0
+		self.__map = self.__makeMap(self.__dims)
 		print(f"{Icons.succ}Map '{self.mapName}' reset !{'':<{self.__dims[1]-len(self.mapName)}}")
 		return(self.__saveJSON())
 
@@ -304,7 +323,7 @@ class Map:
 						case(" " | "p"):
 							self.__pause()
 
-						case("q"):
+						case("\x1b" | "q"):
 							raise(KeyboardInterrupt)
 
 						case("u"):

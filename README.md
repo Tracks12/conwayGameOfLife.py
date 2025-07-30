@@ -40,6 +40,7 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 - [base64](https://docs.python.org/3/library/base64.html)
 - [json](https://docs.python.org/3/library/json.html)
 - [keyboard](https://pypi.org/project/keyboard/) (For Windows system)
+- [math](https://docs.python.org/3/library/math.html)
 - [os](https://docs.python.org/3/library/os.html)
 - [sys](https://docs.python.org/3/library/sys.html)
 - [platform](https://docs.python.org/3/library/platform.html)
