@@ -15,8 +15,9 @@ from random import choice, randrange
 from time import time
 from zlib import compress
 
-from core import SYSTEM, Icons, SystemEnum
+from core import CMD_CLEAR, SYSTEM, B64, Border, Colors, Icons, SystemEnum
 from core.entity import Entity
+from core.loader import Loader
 
 match(SYSTEM):
 	case(SystemEnum.WINDOWS):
@@ -45,17 +46,6 @@ match(SYSTEM):
 				tcsetattr(fd, TCSADRAIN, old)
 
 			return(None)
-
-from core import B64, CMD_CLEAR, Colors
-from core.loader import Loader
-
-class Border:
-	ASCII	= [ "+", "+", "+", "+", "-", "|", "+", "+", "+", "+" ]
-	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│", "┌", "┐", "└", "┘" ]
-	SMOOTH	= [ "╭", "╮", "╰", "╯", "─", "│", "┌", "┐", "└", "┘" ]
-	DASHED	= [ "┌", "┐", "└", "┘", "╌", "┆", "┌", "┐", "└", "┘" ]
-	DOTTED	= [ "┌", "┐", "└", "┘", "┈", "┊", "┌", "┐", "└", "┘" ]
-	DOUBLE	= [ "╔", "╗", "╚", "╝", "═", "║", "╔", "╗", "╚", "╝" ]
 
 class Map:
 	def __init__(self, mapName: str = "world"): # Fichier de chargement par défaut: "data.json"
@@ -107,6 +97,41 @@ class Map:
 
 		except(Exception):
 			return(False)
+
+	def __controlsWindows(self, _keyPressed: list[bool] = [ False ], _hook = None) -> None:
+		if(_keyPressed[0]):
+			_keyPressed[0] = False
+
+			if(is_pressed("space") or is_pressed("p")):
+				self.__pause()
+
+			if(is_pressed("esc") or is_pressed("q")):
+				raise(KeyboardInterrupt)
+
+			if(is_pressed("+")):
+				self.__increaseSpeed()
+
+			if(is_pressed("-")):
+				self.__decreaseSpeed()
+
+			if(is_pressed("r")):
+				self.reset()
+
+			if(is_pressed("a")):
+				self.__addRandomEntity()
+
+		sleep(self.__sleep)
+
+	def __controlsLinux(self) -> None:
+		key = getch(self.__sleep)
+
+		match(key):
+			case(" " | "p"): self.__pause()
+			case("\x1b" | "q"): raise(KeyboardInterrupt)
+			case("+"): self.__increaseSpeed()
+			case("-"): self.__decreaseSpeed()
+			case("r"): self.reset()
+			case("a"): self.__addRandomEntity()
 
 	def __decreaseSpeed(self) -> None:
 		if(self.__sleep < 2):
@@ -171,11 +196,20 @@ class Map:
 					self.__map[xp1][yp1]
 				])
 
-				row.append(1 if (active == 3 or (self.__map[x][y] and active == 2)) else 0)
+				# RULES = [
+				# 	1 if(active == 3 or (self.__map[x][y] and active == 2)) else 0,
+				# 	1 if(active == 2 or (active == 1)) else 0,
+				# 	1 if(not active < 4 or (not self.__map[x][y] and active > 2)) else 0
+				# ]
+				# row.append(RULES[2])
+
+				row.append(1 if(active == 3 or (self.__map[x][y] and active == 2)) else 0)
 
 			return(row)
 
-		with ThreadPoolExecutor() as executor:
+		# self.__map = list([ compute_row(x) for x in range(self.__dims[0]) ])
+
+		with ThreadPoolExecutor(max_workers=self.__dims[0]) as executor:
 			self.__map = list(executor.map(compute_row, range(self.__dims[0])))
 
 	def addCells(self, cells: list[tuple[int]]) -> bool: # Ajout de cellule(s) active(s)
@@ -185,29 +219,29 @@ class Map:
 		return(self.__saveJSON())
 
 	def display(self) -> bool: # Affichage de la map avec/sans les statistiques
-		if(self.stats): # Initialisation & Mise à jours des statistiques
-			active = sum([ sum(cells) for cells in self.__map ])
+		_, __ = int(12), int(20)
 
-			_ = int(12)
+		if(self.stats): # Initialisation & Mise à jours des statistiques
 			createdAt = datetime.fromtimestamp(self.__createdAt).strftime("%Y-%m-%d %H:%M")
 			lastUpdate = datetime.fromtimestamp(self.__lastUpdate).strftime("%Y-%m-%d %H:%M")
+			active = sum([ sum(cells) for cells in self.__map ])
+
 			stats = (
-				f"{'Created at':<{_}}: {createdAt:<{len(str(createdAt))+2}}",
-				f"{'Last Update':<{_}}: {lastUpdate:<{len(str(lastUpdate))+2}}",
-				f"{'Iterations':<{_}}: {self.__iterations:<{len(str(self.__iterations))+2}}",
-				f"{'Speed':<{_}}: {Colors.green}{self.__sleep:.3f}{Colors.end} {'sec':<{4}}",
-				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{active:<{len(str(active))+4}}{Colors.end}",
-				f"{'Filled':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{round((active/self.__cells)*100, 2)}{Colors.end} {'%':<{4}}",
+				f"{'Created at':<{_}}: {createdAt:<{__}}",
+				f"{'Last Update':<{_}}: {lastUpdate:<{__}}",
+				f"{'Iterations':<{_}}: {self.__iterations:<{__}}",
+				f"{'Speed':<{_}}: {Colors.green}{self.__sleep*1000:<{5}.0f}{Colors.end}{'ms':<{__-5}}",
+				f"{'Actives':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{active:<{__}}{Colors.end}",
+				f"{'Filled':<{_}}: {Colors.green if(active < (self.__cells/1.5)) else Colors.red}{round((active/self.__cells)*100, 2):<{7}.2f}{Colors.end}{'%':<{__-7}}",
 			)
 
 		if(self.helper):
-			_ = int(12)
 			help = (
-				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{5}}",
-				f"{Colors.yellow}{'R':<{_}}{Colors.end}: {'Reset':<{13}}",
-				f"{Colors.yellow}{'A':<{_}}{Colors.end}: {'Add random entity':<{13}}",
-				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{13}}",
-				f"{Colors.yellow}{'(U)p/(D)own':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}" if(SYSTEM == SystemEnum.WINDOWS) else f"{Colors.yellow}{'U/D':<{_}}{Colors.end}: {'Speed up/Slow down':<{19}}",
+				f"{Colors.red}{'Esc (Q)':<{_}}{Colors.end}: {'Exit':<{__}}",
+				f"{Colors.yellow}{'R':<{_}}{Colors.end}: {'Reset':<{__}}",
+				f"{Colors.yellow}{'A':<{_}}{Colors.end}: {'Add random entity':<{__}}",
+				f"{Colors.yellow}{'Space (P)':<{_}}{Colors.end}: {'Pause/Resume':<{__}}",
+				f"{Colors.yellow}{'+/-':<{_}}{Colors.end}: {'Speed up/Slow down':<{__}}",
 			)
 
 		braille_map = dict[tuple[int, int], int]({
@@ -240,7 +274,7 @@ class Map:
 							braille |= (1 << bit)
 
 				char = chr(0x2800 + braille)
-				lines.append(f"{Colors.green if braille else Colors.cyan}{char}{Colors.end}")
+				lines.append(f"{Colors.green if(braille) else Colors.blue}{char}{Colors.end}")
 
 			output_lines.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
 
@@ -255,8 +289,11 @@ class Map:
 			if(self.stats and (i < len(stats))): # Affichage des statistiques
 				output_lines[i] += f" {stats[i]}"
 
-			if(self.helper and (len(output_lines)-i-1 < len(help))): # Affichage de l'aide
+			elif(self.helper and (len(output_lines)-i-1 < len(help))): # Affichage de l'aide
 				output_lines[i] += f" {help[len(output_lines)-i-1]}"
+
+			else:
+				output_lines[i] += " "*sum([_, __, 2])
 
 		print("\n".join(output_lines), flush=True)
 		return(True)
@@ -264,7 +301,7 @@ class Map:
 	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
 		self.__map		= list[list[int]](self.__makeMap((int(x), int(y))))
 		self.__dims		= tuple[int]((int(x), int(y)))
-		self.__cells	= int(self.__dims[0]*self.__dims[1])
+		self.__cells	= int(prod(self.__dims))
 
 		return(self.__saveJSON())
 
@@ -291,55 +328,18 @@ class Map:
 				self.__update()
 				self.display()
 
-				if(SYSTEM == SystemEnum.WINDOWS):
-					if(_keyPressed[0]):
-						_keyPressed[0] = False
+				match(SYSTEM):
+					case(SystemEnum.WINDOWS):
+						self.__controlsWindows(_keyPressed, _hook)
 
-						if(is_pressed("space") or is_pressed("p")):
-							self.__pause()
-
-						if(is_pressed("esc") or is_pressed("q")):
-							_hook()
-							raise(KeyboardInterrupt)
-
-						if(is_pressed("up") or is_pressed("u")):
-							self.__increaseSpeed()
-
-						if(is_pressed("down") or is_pressed("d")):
-							self.__decreaseSpeed()
-
-						if(is_pressed("r")):
-							self.reset()
-
-						if(is_pressed("a")):
-							self.__addRandomEntity()
-
-					sleep(self.__sleep)
-
-				if(SYSTEM == SystemEnum.LINUX):
-					key = getch(self.__sleep)
-
-					match(key):
-						case(" " | "p"):
-							self.__pause()
-
-						case("\x1b" | "q"):
-							raise(KeyboardInterrupt)
-
-						case("u"):
-							self.__increaseSpeed()
-
-						case("d"):
-							self.__decreaseSpeed()
-
-						case("r"):
-							self.reset()
-
-						case("a"):
-							self.__addRandomEntity()
+					case(SystemEnum.LINUX):
+						self.__controlsLinux()
 
 		except(KeyboardInterrupt):
 			self.__label(f"STOPPED", Colors.red)
+
+			if("_hook" in locals()):
+				_hook()
 
 			if(self.__saveJSON()):
 				print(f"{Icons.succ}Map '{self.mapName}' saved !{'':<{self.__dims[1]-len(self.mapName)}}")

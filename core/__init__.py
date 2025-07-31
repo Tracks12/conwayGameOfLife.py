@@ -13,6 +13,14 @@ _isLinux = bool(SYSTEM == SystemEnum.LINUX)
 
 CMD_CLEAR = "clear" if(_isLinux) else "cls" # Commande de nettoyage de la console
 
+class Border:
+	ASCII	= [ "+", "+", "+", "+", "-", "|", "+", "+", "+", "+" ]
+	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│", "┌", "┐", "└", "┘" ]
+	SMOOTH	= [ "╭", "╮", "╰", "╯", "─", "│", "┌", "┐", "└", "┘" ]
+	DASHED	= [ "┌", "┐", "└", "┘", "╌", "┆", "┌", "┐", "└", "┘" ]
+	DOTTED	= [ "┌", "┐", "└", "┘", "┈", "┊", "┌", "┐", "└", "┘" ]
+	DOUBLE	= [ "╔", "╗", "╚", "╝", "═", "║", "╔", "╗", "╚", "╝" ]
+
 class Colors: # Module de coloration pour les système Linux/Unix
 	bold	= "\033[1m"		if(_isLinux) else ""
 	italic	= "\033[3m"		if(_isLinux) else ""
