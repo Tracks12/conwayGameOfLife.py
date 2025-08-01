@@ -98,7 +98,7 @@ class Map:
 		except(Exception):
 			return(False)
 
-	def __controlsWindows(self, _keyPressed: list[bool] = [ False ], _hook = None) -> None:
+	def __controlsWindows(self, _keyPressed: list[bool] = [ False ]) -> None:
 		if(_keyPressed[0]):
 			_keyPressed[0] = False
 
@@ -201,7 +201,7 @@ class Map:
 				# 	1 if(active == 2 or (active == 1)) else 0,
 				# 	1 if(not active < 4 or (not self.__map[x][y] and active > 2)) else 0
 				# ]
-				# row.append(RULES[2])
+				# row.append(RULES[1])
 
 				row.append(1 if(active == 3 or (self.__map[x][y] and active == 2)) else 0)
 
@@ -330,7 +330,7 @@ class Map:
 
 				match(SYSTEM):
 					case(SystemEnum.WINDOWS):
-						self.__controlsWindows(_keyPressed, _hook)
+						self.__controlsWindows(_keyPressed)
 
 					case(SystemEnum.LINUX):
 						self.__controlsLinux()
