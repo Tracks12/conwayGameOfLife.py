@@ -13,6 +13,13 @@ _isLinux = bool(SYSTEM == SystemEnum.LINUX)
 
 CMD_CLEAR = "clear" if(_isLinux) else "cls" # Commande de nettoyage de la console
 
+BRAILLE_MAP = dict[tuple[int, int], int]({
+	(0, 0): 0, (0, 1): 3,
+	(1, 0): 1, (1, 1): 4,
+	(2, 0): 2, (2, 1): 5,
+	(3, 0): 6, (3, 1): 7,
+})
+
 class Border:
 	ASCII	= [ "+", "+", "+", "+", "-", "|", "+", "+", "+", "+" ]
 	SIMPLE	= [ "┌", "┐", "└", "┘", "─", "│", "┌", "┐", "└", "┘" ]

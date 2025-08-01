@@ -15,7 +15,7 @@ from random import choice, randrange
 from time import time
 from zlib import compress
 
-from core import CMD_CLEAR, SYSTEM, B64, Border, Colors, Icons, SystemEnum
+from core import BRAILLE_MAP, CMD_CLEAR, SYSTEM, B64, Border, Colors, Icons, SystemEnum
 from core.entity import Entity
 from core.loader import Loader
 
@@ -67,7 +67,7 @@ class Map:
 	def __loadJSON(self) -> bool: # Chargement depuis un fichier
 		try:
 			with open(self.__path, "rb") as outFile:
-				__data = Loader.map(outFile, ["Loading map ...", "Map loaded !   ", "Map loading failed !"])
+				__data = Loader.map(outFile)
 
 				self.__createdAt	= float(__data["createdAt"])
 				self.__lastUpdate	= float(__data["lastUpdate"])
@@ -83,7 +83,7 @@ class Map:
 
 	def __saveJSON(self) -> bool: # Sauvegarde dans un fichier
 		try:
-			self.__lastUpdate = time()
+			self.__lastUpdate = float(time())
 
 			with open(self.__path, "wb") as inFile:
 				inFile.write(compress(B64.encode(dumps({
@@ -105,19 +105,19 @@ class Map:
 			if(is_pressed("space") or is_pressed("p")):
 				self.__pause()
 
-			if(is_pressed("esc") or is_pressed("q")):
+			elif(is_pressed("esc") or is_pressed("q")):
 				raise(KeyboardInterrupt)
 
-			if(is_pressed("+")):
+			elif(is_pressed("+")):
 				self.__increaseSpeed()
 
-			if(is_pressed("-")):
+			elif(is_pressed("-")):
 				self.__decreaseSpeed()
 
-			if(is_pressed("r")):
+			elif(is_pressed("r")):
 				self.reset()
 
-			if(is_pressed("a")):
+			elif(is_pressed("a")):
 				self.__addRandomEntity()
 
 		sleep(self.__sleep)
@@ -244,13 +244,6 @@ class Map:
 				f"{Colors.yellow}{'+/-':<{_}}{Colors.end}: {'Speed up/Slow down':<{__}}",
 			)
 
-		braille_map = dict[tuple[int, int], int]({
-			(0, 0): 0, (0, 1): 3,
-			(1, 0): 1, (1, 1): 4,
-			(2, 0): 2, (2, 1): 5,
-			(3, 0): 6, (3, 1): 7,
-		})
-
 		output_lines = [ "".join([
 			self.__mapFrame[0], self.__mapFrame[7],
 			Colors.purple, self.mapName.capitalize(), Colors.end,
@@ -270,11 +263,9 @@ class Map:
 							and (xx < self.__dims[1])
 							and self.__map[yy][xx]
 						):
-							bit = int(braille_map[(dy, dx)])
-							braille |= (1 << bit)
+							braille |= (1 << int(BRAILLE_MAP[(dy, dx)]))
 
-				char = chr(0x2800 + braille)
-				lines.append(f"{Colors.green if(braille) else Colors.blue}{char}{Colors.end}")
+				lines.append(f"{Colors.green if(braille) else Colors.blue}{chr(0x2800 + braille)}{Colors.end}")
 
 			output_lines.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
 
@@ -299,9 +290,10 @@ class Map:
 		return(True)
 
 	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
-		self.__map		= list[list[int]](self.__makeMap((int(x), int(y))))
-		self.__dims		= tuple[int]((int(x), int(y)))
-		self.__cells	= int(prod(self.__dims))
+		self.__createdAt	= float(time())
+		self.__map			= list[list[int]](self.__makeMap((int(x), int(y))))
+		self.__dims			= tuple[int]((int(x), int(y)))
+		self.__cells		= int(prod(self.__dims))
 
 		return(self.__saveJSON())
 

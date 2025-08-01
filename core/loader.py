@@ -15,7 +15,7 @@ class Loader: # Module de chargements
 			print(f" [{Colors.bold}{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
 			sleep(.005)
 
-	def map(file, msg = ["", "", ""]): # Méthode de chargement pour fichier MAP
+	def map(file, msg = ["Loading map ...", "Map loaded !   ", "Map loading failed !"]): # Méthode de chargement pour fichier MAP
 		Loader.anim(msg[0])
 
 		try:
