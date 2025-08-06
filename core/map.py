@@ -55,10 +55,11 @@ class Map:
 		self.__path			= abspath(f"{dirname(__file__)}/../saves/{str(mapName)}.map")
 		self.__dims			= tuple[int]((0, 0))
 		self.__cells		= int(prod(self.__dims))
-		self.__map			= list[list[int]]([])
+		self.__map			= list[list[tuple[int]]]([])
 		self.__mapFrame		= Border.SMOOTH
 		self.__iterations	= int(0)
 		self.__sleep		= float(.0625)
+		self.__threads		= bool(True)
 		self.mapName		= str(mapName)
 		self.loaded			= bool(self.__loadJSON())
 		self.helper			= bool(False)
@@ -72,7 +73,7 @@ class Map:
 				self.__createdAt	= float(__data["createdAt"])
 				self.__lastUpdate	= float(__data["lastUpdate"])
 				self.__iterations	= int(__data["iterations"])
-				self.__map			= list[list[int]](__data["map"])
+				self.__map			= list[list[tuple[int]]](__data["map"])
 				self.__dims			= tuple[int]((len(self.__map), len(self.__map[0])))
 				self.__cells		= int(prod(self.__dims))
 
@@ -156,16 +157,16 @@ class Map:
 
 	def __label(self, text: str, color: Colors = "") -> None:
 		__dims	= tuple[float]((self.__dims[0]/8, self.__dims[1]/2))
-		_		= str(" "*int(__dims[1]/2))[int((len(text)+2)/2):-1]
+		_		= "\x1b[C"*(int((__dims[1]/2)-int((len(text)+2)/2))-1)
 
 		print("\x1b[A"*int(__dims[0]+2), end="\r")
-		print(f"{self.__mapFrame[5]}{_}[ {color}{text}{Colors.end} ]{_[:-1]}")
+		print(f"{_} [ {color}{text}{Colors.end} ] ")
 		print("\x1b[B"*int(__dims[0]+1), end="\r")
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
-	def __makeMap(self, dims = (20, 20)) -> list[list[int]]:
-		map = list[list[int]]([[ 0 for _ in range(int(dims[1])) ] for _ in range(int(dims[0])) ])
+	def __makeMap(self, dims = (20, 20)) -> list[list[tuple[int]]]:
+		map = list[list[tuple[int]]]([[ (0, 0) for _ in range(int(dims[1])) ] for _ in range(int(dims[0])) ])
 
 		return(map)
 
@@ -177,44 +178,47 @@ class Map:
 		input(f"{'Press enter to continue ...':<{int(self.__dims[1]/2)}}")
 		shell(CMD_CLEAR)
 
+	def __rules(self, cell: tuple[int] = (0, 0), active: int = 0) -> tuple[int]:
+		match(cell[1]):
+			case(0): return((1, 0) if(active == 3 or (cell[0] and active == 2)) else (0, 0))
+			# case(1): return((1, 0) if(active == 2 or (active == 1)) else (0, 0))
+			# case(2): return((1, 1) if(active == 1 or (not cell[0] and active == 3)) else (0, 0))
+			# case(3): return((1, 2) if(cell[0] or active == 1) else (0, 0))
+			case(_): return((0, 0))
+
 	def __update(self) -> None: # Mise à jour de la map
-		def compute_row(x: int) -> list[int]:
-			row = list[int]([])
+		def compute_row(x: int) -> list[tuple[int]]:
+			row = list[tuple[int]]([])
 
 			for y in range(self.__dims[1]):
 				xm1, xp1 = (x - 1) % self.__dims[0], (x + 1) % self.__dims[0]
 				ym1, yp1 = (y - 1) % self.__dims[1], (y + 1) % self.__dims[1]
 
 				active = sum([
-					self.__map[xm1][ym1],
-					self.__map[xm1][y],
-					self.__map[xm1][yp1],
-					self.__map[x][ym1],
-					self.__map[x][yp1],
-					self.__map[xp1][ym1],
-					self.__map[xp1][y],
-					self.__map[xp1][yp1]
+					self.__map[xm1][ym1][0],
+					self.__map[xm1][y][0],
+					self.__map[xm1][yp1][0],
+					self.__map[x][ym1][0],
+					self.__map[x][yp1][0],
+					self.__map[xp1][ym1][0],
+					self.__map[xp1][y][0],
+					self.__map[xp1][yp1][0]
 				])
 
-				# RULES = [
-				# 	1 if(active == 3 or (self.__map[x][y] and active == 2)) else 0,
-				# 	1 if(active == 2 or (active == 1)) else 0,
-				# 	1 if(not active < 4 or (not self.__map[x][y] and active > 2)) else 0
-				# ]
-				# row.append(RULES[1])
-
-				row.append(1 if(active == 3 or (self.__map[x][y] and active == 2)) else 0)
+				row.append(self.__rules(self.__map[x][y], active))
 
 			return(row)
 
-		# self.__map = list([ compute_row(x) for x in range(self.__dims[0]) ])
+		if(self.__threads):
+			with ThreadPoolExecutor(max_workers=self.__dims[0]) as executor:
+				self.__map = list(executor.map(compute_row, range(self.__dims[0])))
 
-		with ThreadPoolExecutor(max_workers=self.__dims[0]) as executor:
-			self.__map = list(executor.map(compute_row, range(self.__dims[0])))
+		else:
+			self.__map = list([ compute_row(x) for x in range(self.__dims[0]) ])
 
 	def addCells(self, cells: list[tuple[int]]) -> bool: # Ajout de cellule(s) active(s)
 		for cell in cells:
-			self.__map[int(cell[0])-1][int(cell[1])-1] = 1
+			self.__map[int(cell[0])-1][int(cell[1])-1] = (1, 0)
 
 		return(self.__saveJSON())
 
@@ -224,7 +228,7 @@ class Map:
 		if(self.stats): # Initialisation & Mise à jours des statistiques
 			createdAt = datetime.fromtimestamp(self.__createdAt).strftime("%Y-%m-%d %H:%M")
 			lastUpdate = datetime.fromtimestamp(self.__lastUpdate).strftime("%Y-%m-%d %H:%M")
-			active = sum([ sum(cells) for cells in self.__map ])
+			active = sum([ sum([ c[0] for c in cells ]) for cells in self.__map ])
 
 			stats = (
 				f"{'Created at':<{_}}: {createdAt:<{__}}",
@@ -261,7 +265,7 @@ class Map:
 						if(
 							(yy < self.__dims[0])
 							and (xx < self.__dims[1])
-							and self.__map[yy][xx]
+							and self.__map[yy][xx][0]
 						):
 							braille |= (1 << int(BRAILLE_MAP[(dy, dx)]))
 
@@ -290,9 +294,10 @@ class Map:
 		return(True)
 
 	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
-		self.__createdAt	= float(time())
-		self.__map			= list[list[int]](self.__makeMap((int(x), int(y))))
-		self.__dims			= tuple[int]((int(x), int(y)))
+		self.__createdAt	= time()
+		self.__iterations	= int(0)
+		self.__map			= self.__makeMap((int(x), int(y)))
+		self.__dims			= (x, y)
 		self.__cells		= int(prod(self.__dims))
 
 		return(self.__saveJSON())
