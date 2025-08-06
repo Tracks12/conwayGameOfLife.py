@@ -4,6 +4,7 @@
 # Module de l'objet Entity
 # ce module contient les fonctionnalités de chargement des entités
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import listdir
 from os.path import abspath, dirname
 
@@ -16,11 +17,20 @@ class Entity:
 		self.loaded		= bool(self.__loadJSON())
 
 	def __loadJSON(self) -> bool: # Chargement des entités depuis le dossier "entities"
+		def computeEntity(entity: str) -> dict[str, str]:
+			with open(f"{self.__path}/{entity}.json", 'r') as outFile:
+				return(Loader.json(outFile, [f"Loading {entity} ...", f"{entity} loaded !   ", f"{entity} loading Failed !"])[entity])
+
 		try:
 			print("Loading entities ...")
-			for entity in [ e.split(".")[0] for e in listdir(self.__path) ]:
-				with open(f"{self.__path}/{entity}.json", 'r') as outFile:
-					self.__entities[entity] = Loader.json(outFile, [f"Loading {entity} ...", f"{entity} loaded !   ", f"{entity} loading Failed !"])[entity]
+			__entities = [ e.split(".")[0] for e in listdir(self.__path) if "json" in e.split(".") ]
+
+			with ThreadPoolExecutor(max_workers=len(__entities)) as executor:
+				threads = { executor.submit(computeEntity, entity): entity for entity in __entities }
+
+				for thread in as_completed(threads):
+					entity = threads[thread]
+					self.__entities[entity] = thread.result()
 
 			print("Entities loaded !")
 			return(True)
