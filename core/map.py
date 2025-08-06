@@ -182,9 +182,11 @@ class Map:
 		match(cell[1]):
 			case(0): return((1, 0) if(active == 3 or (cell[0] and active == 2)) else (0, 0))
 			# case(1): return((1, 0) if(active == 2 or (active == 1)) else (0, 0))
-			# case(2): return((1, 1) if(active == 1 or (not cell[0] and active == 3)) else (0, 0))
-			# case(3): return((1, 2) if(cell[0] or active == 1) else (0, 0))
-			case(_): return((0, 0))
+			# case(2): return((1, 0) if(active == 1 or (not cell[0] and active == 3)) else (0, 0))
+			# case(3): return((1, 0) if(cell[0] or active == 1) else (0, 0))
+			# case(4): return((1, 0) if(cell[0] or not active == 3) else (0, 0))
+
+		return((0, 0))
 
 	def __update(self) -> None: # Mise à jour de la map
 		def compute_row(x: int) -> list[tuple[int]]:
@@ -216,9 +218,9 @@ class Map:
 		else:
 			self.__map = list([ compute_row(x) for x in range(self.__dims[0]) ])
 
-	def addCells(self, cells: list[tuple[int]]) -> bool: # Ajout de cellule(s) active(s)
+	def addCells(self, cells: list[tuple[int]], rule: int = 0) -> bool: # Ajout de cellule(s) active(s)
 		for cell in cells:
-			self.__map[int(cell[0])-1][int(cell[1])-1] = (1, 0)
+			self.__map[int(cell[0])-1][int(cell[1])-1] = (1, rule)
 
 		return(self.__saveJSON())
 

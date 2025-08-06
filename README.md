@@ -1,6 +1,6 @@
 # **conwayGameOfLife**
 
-Le jeu de la vie de John Horton Conway
+Le "Jeu de la Vie", créé par John Horton Conway en 1970, est un automate cellulaire sur une grille en 2D, où chaque cellule peut être vivante ou morte. À chaque génération, l’état des cellules évolue selon des règles simples: une cellule vivante meurt par sous-population (moins de deux voisines) ou surpopulation (plus de trois voisines), mais survit avec deux ou trois voisines. Une cellule morte reprend vie si elle a exactement trois voisines vivantes. La première configuration est choisie manuellement, mais les suivantes se déduisent automatiquement. Le but est d’observer des évolutions surprenantes et complexes.
 
 > [!Note]
 > Pour en connaître un peu plus, vous pouvez visiter la page **[Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)** du jeu de la vie.
@@ -38,12 +38,13 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 ### Dépendances
 
 - [base64](https://docs.python.org/3/library/base64.html)
+- [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html)
 - [json](https://docs.python.org/3/library/json.html)
 - [keyboard](https://pypi.org/project/keyboard/) (For Windows system)
 - [math](https://docs.python.org/3/library/math.html)
 - [os](https://docs.python.org/3/library/os.html)
-- [sys](https://docs.python.org/3/library/sys.html)
 - [platform](https://docs.python.org/3/library/platform.html)
+- [sys](https://docs.python.org/3/library/sys.html)
 - [termios](https://docs.python.org/3/library/termios.html) (For Linux system)
 - [tty](https://docs.python.org/3/library/tty.html) (For Linux system)
 - [time](https://docs.python.org/3/library/time.html)
@@ -74,11 +75,12 @@ Les maps générées sont sauvegardées de manière automatique après chaque mi
 
 ### Les entités
 
-De même que pour la map, les entités sont stockées dans le dossier **[entities](entities/)**
+De même que pour les maps, les entités sont stockées dans le dossier **[entities](entities/)**
 
 Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en suivant le formatage de positionnement relatif avec les coordonnées **x** et **y** comme dans l'exemple ci dessous pour l'entité "block":
 
 ```json
+// block.json
 {
   "block": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]"
 }
