@@ -54,22 +54,25 @@ L'installation de **[Python 3](https://www.python.org/downloads/)** est recomman
 
 ## Utilisations
 
-| Fonctionnalités                     | Commandes                                                                                                    |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Exécuter le script                  | `$ python main.py`                                                                                           |
-| Insérer une ou plusieurs cellule(s) | `$ python main.py -a <mapName> "[(x, y), ...]"`<br />`$ python main.py --add <mapName> "[(x, y), ...]"`      |
-| Insérer une entité                  | `$ python main.py -A <mapName> <type> <x> <y>`<br />`$ python main.py --add-entity <mapName> <type> <x> <y>` |
-| Afficher une map enregistrée        | `$ python main.py -d <mapName>`<br />`$ python main.py --display <mapName>`                                  |
-| Lister les maps sauvegardés         | `$ python main.py -l`<br />`$ python main.py --list`                                                         |
-| Créer une nouvelle map              | `$ python main.py -n <mapName> <x> <y>`<br />`$ python main.py --new <mapName> <x> <y>`                      |
-| Réinitialiser une map               | `$ python main.py -r <mapName>`<br />`$ python main.py --reset <mapName>`                                    |
-| Jouer une map                       | `$ python main.py -s <mapName>`<br />`$ python main.py --start <mapName>`                                    |
+Pour lancer le programme principal en mode interactif, tapez `$ python main.py` dans un terminal ouvert à la racine du projet, vous n'aurez plus qu'à choisir le nom de la map que vous voulez chargé et simulé.
+
+Usage: `$ python main.py <argument>`
+
+| Arguments            | Options | Values      | Descriptions                                 |
+| -------------------- | ------- | ----------- | -------------------------------------------- |
+| `-a`, `--add`        | -       | `<mapName>` | Insérer une ou plusieurs cellule(s)          |
+| `-A`, `--add-entity` | -       | `<mapName>` | Insérer une entité                           |
+| `-d`, `--display`    | -       | `<mapName>` | Afficher une map enregistrée                 |
+| `-l`, `--list`       | -       | -           | Lister les maps sauvegardés                  |
+| `-n`, `--new`        | -       | `<mapName>` | Créer une nouvelle map                       |
+| `-r`, `--reset`      | -       | `<mapName>` | Réinitialiser une map                        |
+| `-s`, `--start`      | `-t`    | `<mapName>` | Jouer une map, `-t` pour le rendu multicoeur |
 
 [Sommaire](#sommaire)
 
 ## Sauvegarde
 
-Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci dans un fichier **.map** portant le nom de la map dans le répertoire **[saves](saves/)** (_exemple: **[world.map](saves/world.map)**_)
+Les maps générées sont sauvegardées de manière automatique après chaque mise à jour de celle-ci ou arrêt de la simulation dans un fichier **.map** portant le nom de la map dans le répertoire **[saves](saves/)** (_exemple: **[world.map](saves/world.map)**_)
 
 [Sommaire](#sommaire)
 
@@ -85,6 +88,8 @@ Si vous voulez ajouter des entités dans le fichier, vous pouvez le faire en sui
   "block": "[(x, y), (x, y+1), (x+1, y), (x+1, y+1)]"
 }
 ```
+
+Depuis la version 2.4, les entités sont chargés de façon asynchrone de sorte à diminuer les temps de chargement lors d'ajouts d'entités ou du lancement de simulations
 
 [Sommaire](#sommaire)
 

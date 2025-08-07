@@ -18,8 +18,10 @@ class Entity:
 
 	def __loadJSON(self) -> bool: # Chargement des entités depuis le dossier "entities"
 		def computeEntity(entity: str) -> dict[str, str]:
+			_ = int(20)
+
 			with open(f"{self.__path}/{entity}.json", 'r') as outFile:
-				return(Loader.json(outFile, [f"Loading {entity} ...", f"{entity} loaded !   ", f"{entity} loading Failed !"])[entity])
+				return(Loader.json(outFile, [f"Loading {entity} ...{'':<{_}}", f"{entity} loaded !{'':<{_}}", f"{entity} loading Failed !{'':<{_}}"])[entity])
 
 		try:
 			print("Loading entities ...")

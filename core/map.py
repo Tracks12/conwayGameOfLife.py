@@ -62,7 +62,7 @@ class Map:
 		self.__mapFrame		= Border.SMOOTH
 		self.__iterations	= int(0)
 		self.__sleep		= float(.0625)
-		self.__threads		= bool(True)
+		self.__threads		= bool(False)
 		self.mapName		= str(mapName)
 		self.loaded			= bool(self.__loadJSON())
 		self.helper			= bool(False)
@@ -168,14 +168,14 @@ class Map:
 
 	# Création d'une map sur un format pré-défini
 	# Par défaut, on génère une map de 20x20 si les dimensions ne sont pas saisies
-	def __makeMap(self, dims = (20, 20)) -> list[list[tuple[int]]]:
+	def __makeMap(self, dims: tuple[int] = (20, 20)) -> list[list[tuple[int]]]:
 		map = list[list[tuple[int]]]([[ (0, 0) for _ in range(int(dims[1])) ] for _ in range(int(dims[0])) ])
 
 		return(map)
 
 	def __pause(self) -> None:
 		self.__label("PAUSED", Colors.yellow)
-		input(f"{'Press enter to continue ...':<{int(self.__dims[1]/2)}}")
+		input(f"{'Press enter to resume ...':<{int(self.__dims[1]/2)}}")
 		shell(CMD_CLEAR)
 
 	def __rules(self, cell: tuple[int] = (0, 0), active: int = 0) -> tuple[int]:
@@ -310,7 +310,10 @@ class Map:
 		print(f"{Icons.succ}Map '{self.mapName}' reset !{'':<{self.__dims[1]-len(self.mapName)}}")
 		return(self.__saveJSON())
 
-	def start(self) -> bool: # Lancement du jeu
+	def start(self, multithreading: bool = False) -> bool: # Lancement du jeu
+		if(multithreading):
+			self.__threads = True
+
 		self.__entities = Entity()
 		self.helper = True
 		shell(CMD_CLEAR)

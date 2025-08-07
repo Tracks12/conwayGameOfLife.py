@@ -8,18 +8,18 @@ from zlib import decompress
 from core import B64, Colors, Icons
 
 class Loader: # Module de chargements
-	def anim(msg: str):
+	def anim(msg: str) -> None:
 		arr = ['\\', '|', '/', '-']
 
 		for i in range(10):
 			print(f" [{Colors.bold}{Colors.yellow}{arr[i % len(arr)]}{Colors.end}] {msg}", end = "\r")
 			sleep(.005)
 
-	def map(file, msg = ["Loading map ...", "Map loaded !   ", "Map loading failed !"]): # Méthode de chargement pour fichier MAP
+	def json(file, msg: list[str] = [""]*3): # Méthode de chargement pour fichier JSON
 		Loader.anim(msg[0])
 
 		try:
-			dataMAP = loads(B64.decode(decompress(file.read())))
+			dataMAP = loads(file.read())
 			print(f"{Icons.succ}{msg[1]}")
 			return(dataMAP)
 
@@ -27,11 +27,11 @@ class Loader: # Module de chargements
 			print(f"{Icons.fail}{msg[2]}")
 			return(False)
 
-	def json(file, msg = ["", "", ""]): # Méthode de chargement pour fichier JSON
+	def map(file, msg: list[str] = ["Loading map ...", f"Map loaded !{' ':<{3}}", "Map loading failed !"]): # Méthode de chargement pour fichier MAP
 		Loader.anim(msg[0])
 
 		try:
-			dataMAP = loads(file.read())
+			dataMAP = loads(B64.decode(decompress(file.read())))
 			print(f"{Icons.succ}{msg[1]}")
 			return(dataMAP)
 

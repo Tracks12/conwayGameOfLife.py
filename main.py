@@ -29,7 +29,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			(("-l", "--list"), ""),
 			(("-n", "--new"), "<mapName> <x> <y>"),
 			(("-r", "--reset"), "<mapName>"),
-			(("-s", "--start"), "<mapName>"),
+			(("-s", "--start"), "<mapName> (-t)"),
 			(("-h", "--help"), ""),
 			(("-v", "--version"), "")
 		),
@@ -40,7 +40,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			"List all saved map",
 			"Create a new map",
 			"Reset a map",
-			"Play a map\n",
+			"Play a map, -t for multithreaded rendering\n",
 			"Display the help menu",
 			"Display the program version\n"
 		)
@@ -56,7 +56,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 			print(f' {_p:<{44}}{args["descriptions"][i]}')
 
 	elif(argv[1] in args["prefix"][-1][0]):
-		print(" conwayGameOfLife.py 2.3 - Florian Cardinal\n")
+		print(" conwayGameOfLife.py 2.4 - Florian Cardinal\n")
 
 	elif(argv[1] in args["prefix"][3][0]):
 		saves = [ s.split(".")[0] for s in listdir(f"{abspath(dirname(__file__))}/saves/") ]
@@ -150,7 +150,7 @@ def arg() -> bool: # Fonction d'entrée des arguments
 
 		elif(argv[1] in args["prefix"][6][0]):
 			if(map.loaded):
-				map.start()
+				map.start(multithreading="-t" in argv)
 
 			else:
 				return(errMsg())
