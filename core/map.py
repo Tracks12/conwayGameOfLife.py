@@ -24,6 +24,9 @@ match(SYSTEM):
 		from keyboard import is_pressed, on_press
 		from time import sleep
 
+		def onKeyPress(keys: list[bool]) -> None:
+			keys[0] = True
+
 	case(SystemEnum.LINUX):
 		from select import select
 		from sys import stdin
@@ -170,9 +173,6 @@ class Map:
 
 		return(map)
 
-	def __onKeyPress(self, keys: list[bool]) -> None:
-		keys[0] = True
-
 	def __pause(self) -> None:
 		self.__label("PAUSED", Colors.yellow)
 		input(f"{'Press enter to continue ...':<{int(self.__dims[1]/2)}}")
@@ -189,7 +189,7 @@ class Map:
 		return((0, 0))
 
 	def __update(self) -> None: # Mise à jour de la map
-		def compute_row(x: int) -> list[tuple[int]]:
+		def computeRow(x: int) -> list[tuple[int]]:
 			row = list[tuple[int]]([])
 
 			for y in range(self.__dims[1]):
@@ -213,10 +213,10 @@ class Map:
 
 		if(self.__threads):
 			with ThreadPoolExecutor(max_workers=self.__dims[0]) as executor:
-				self.__map = list(executor.map(compute_row, range(self.__dims[0])))
+				self.__map = list(executor.map(computeRow, range(self.__dims[0])))
 
 		else:
-			self.__map = list([ compute_row(x) for x in range(self.__dims[0]) ])
+			self.__map = list([ computeRow(x) for x in range(self.__dims[0]) ])
 
 	def addCells(self, cells: list[tuple[int]], rule: int = 0) -> bool: # Ajout de cellule(s) active(s)
 		for cell in cells:
@@ -250,7 +250,7 @@ class Map:
 				f"{Colors.yellow}{'+/-':<{_}}{Colors.end}: {'Speed up/Slow down':<{__}}",
 			)
 
-		output_lines = [ "".join([
+		__output = [ "".join([
 			self.__mapFrame[0], self.__mapFrame[7],
 			Colors.purple, self.mapName.capitalize(), Colors.end,
 			self.__mapFrame[6], self.__mapFrame[4]*(len([ n for n in range(0, self.__dims[1], 2) ])-len(self.mapName)-2), self.__mapFrame[1],
@@ -273,26 +273,26 @@ class Map:
 
 				lines.append(f"{Colors.green if(braille) else Colors.blue}{chr(0x2800 + braille)}{Colors.end}")
 
-			output_lines.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
+			__output.append(f"{self.__mapFrame[5]}{''.join(lines)}{self.__mapFrame[5]}")
 
 		__dimsOutput = f"{self.__dims[0]}x{self.__dims[1]}"
-		output_lines.append("".join([
+		__output.append("".join([
 			self.__mapFrame[2], self.__mapFrame[4]*(len([ n for n in range(0, self.__dims[1], 2) ])-len(__dimsOutput)-2), self.__mapFrame[9],
 			Colors.purple, __dimsOutput, Colors.end,
 			self.__mapFrame[8], self.__mapFrame[3]
 		]))
 
-		for i in range(len(output_lines)):
+		for i in range(len(__output)):
 			if(self.stats and (i < len(stats))): # Affichage des statistiques
-				output_lines[i] += f" {stats[i]}"
+				__output[i] += f" {stats[i]}"
 
-			elif(self.helper and (len(output_lines)-i-1 < len(help))): # Affichage de l'aide
-				output_lines[i] += f" {help[len(output_lines)-i-1]}"
+			elif(self.helper and (len(__output)-i-1 < len(help))): # Affichage de l'aide
+				__output[i] += f" {help[len(__output)-i-1]}"
 
 			else:
-				output_lines[i] += " "*sum([_, __, 2])
+				__output[i] += " "*sum([_, __, 2])
 
-		print("\n".join(output_lines), flush=True)
+		print("\n".join(__output), flush=True)
 		return(True)
 
 	def initMap(self, x: int, y: int) -> bool: # Initialisation de la map dans l'objet
@@ -317,7 +317,7 @@ class Map:
 
 		if(SYSTEM == SystemEnum.WINDOWS):
 			_keyPressed	= [ False ]
-			_hook		= on_press(lambda _:self.__onKeyPress(_keyPressed))
+			_hook		= on_press(lambda _:onKeyPress(_keyPressed))
 
 		try:
 			while(True):
